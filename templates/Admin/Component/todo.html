@@ -1,0 +1,148 @@
+<section class="lg:col-span-4 flex flex-col gap-4">
+  <!-- TO DO LIST -->
+   <div class="card relative">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold">✅ To Do List</h2>
+      <div class="flex gap-2">
+        <button id="btnToggleEdit" onclick="toggleEdit()" class="text-zinc-400 hover:text-white transition">
+          ✏️
+        </button>
+        <button onclick="openModal()" class="text-zinc-400 hover:text-white transition">
+          ➕
+        </button>
+      </div>
+    </div>
+    <ul id="todoList" class="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+      <!-- List items will be inserted dynamically -->
+    </ul>
+  </div>
+<!-- MODAL ADD TODO -->
+  <div id="modalAddTodo" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50">
+  <div class="bg-zinc-800 p-6 rounded-lg w-[90%] max-w-md text-white">
+    <h3 class="text-lg font-bold mb-4">Tambah To Do</h3>
+    <input id="newTodoInput" type="text" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-600"
+      placeholder="Apa tugasmu hari ini?" />
+    <div class="flex justify-end mt-4 gap-2">
+      <button onclick="closeModal()" class="text-sm px-3 py-2 bg-zinc-700 rounded">Batal</button>
+      <button onclick="addTodo()" class="text-sm px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white">Tambah</button>
+    </div>
+  </div>
+</div>
+  <!-- TOP CHART USER -->
+  <!-- Card Leaderboard -->
+<div class="card-muted p-4 rounded-xl shadow-md bg-gray-800 text-white">
+  <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+    <i class="fa fa-trophy text-yellow-400"></i> Top Chart User
+  </h2>
+  <ul id="leaderboardList" class="text-sm space-y-2"></ul>
+</div>
+</section>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function renderLeaderboard(users) {
+  // kosongkan dulu list lama
+  $("#leaderboardList").empty();
+
+  // sort descending by totalPoint
+  users.sort((a, b) => b.totalPoint - a.totalPoint);
+
+  // ambil 5 teratas
+  users.slice(0, 5).forEach((user, index) => {
+    let rankIcon = "";
+
+    // kasih icon beda untuk 3 besar
+    if (index === 0) rankIcon = `<i class="fa fa-crown text-yellow-400"></i>`;
+    else if (index === 1) rankIcon = `<i class="fa fa-medal text-gray-300"></i>`;
+    else if (index === 2) rankIcon = `<i class="fa fa-medal text-amber-600"></i>`;
+    else rankIcon = `<i class="fa fa-user text-blue-400"></i>`;
+
+    $("#leaderboardList").append(`
+      <li class="flex justify-between items-center bg-gray-700 p-2 rounded-md hover:bg-gray-600 transition">
+        <span class="flex items-center gap-2">${rankIcon} ${user.name}</span>
+        <span class="font-semibold text-green-400">${user.totalPoint} pts</span>
+      </li>
+    `);
+  });
+}
+
+// panggil lewat ajax
+$.ajax({
+  url: "/leaderboard_list",
+  method: "GET",
+  success: function(res) {
+    if (res.leaderboard) {
+      renderLeaderboard(res.leaderboard);
+    }
+  },
+  error: function(err) {
+    console.error("❌ Error fetching leaderboard:", err);
+  }
+});
+</script>
+
+<script>
+  let editMode = false;
+  const todoList = document.getElementById("todoList");
+
+  const todos = [
+    { text: "Kerjakan laporan", done: false },
+    { text: "Review soal", done: true },
+    { text: "Upload hasil kuis", done: false },
+    { text: "Periksa absensi", done: false },
+    { text: "Diskusi tim dev", done: false },
+    { text: "Tulis dokumentasi", done: false },
+  ];
+
+  function renderTodos() {
+    todoList.innerHTML = "";
+    todos.forEach((todo, index) => {
+      const li = document.createElement("li");
+      li.className = `flex items-center justify-between px-3 py-2 rounded bg-zinc-700 transition hover:bg-zinc-600`;
+      li.innerHTML = `
+        <span class="cursor-pointer ${todo.done ? 'line-through text-zinc-400' : ''}"
+          onclick="toggleDone(${index})">${todo.text}</span>
+        ${editMode ? `<button onclick="deleteTodo(${index})" class="text-red-400 hover:text-red-600">🗑️</button>` : ''}
+      `;
+      todoList.appendChild(li);
+    });
+  }
+
+  function toggleDone(index) {
+    todos[index].done = !todos[index].done;
+    renderTodos();
+  }
+
+  function deleteTodo(index) {
+    todos.splice(index, 1);
+    renderTodos();
+  }
+
+  function toggleEdit() {
+    editMode = !editMode;
+    renderTodos();
+  }
+
+  function openModal() {
+    document.getElementById("modalAddTodo").classList.remove("hidden");
+  }
+
+  function closeModal() {
+    document.getElementById("modalAddTodo").classList.add("hidden");
+    document.getElementById("newTodoInput").value = "";
+  }
+
+  function addTodo() {
+    const input = document.getElementById("newTodoInput");
+    const value = input.value.trim();
+    if (value !== "") {
+      todos.push({ text: value, done: false });
+      input.value = "";
+      closeModal();
+      renderTodos();
+    }
+  }
+
+  renderTodos();
+</script>

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Quiz Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+  .answer-option { padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; border: 2px solid transparent; }
+  .correct-answer { border-color: #10B981; } /* hijau */
+  .wrong-answer { border-color: #EF4444; }   /* merah */
+  .user-answer { background-color: #f3f4f6; } /* abu-abu lembut */
+</style>
+ 
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+<!-- ==== Section Pra-Quiz Start ==== -->
+<div id="preQuizSection" class="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
+  <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-10 max-w-2xl w-full text-center space-y-6">
+    
+    <!-- Judul -->
+    <h1 class="text-2xl lg:text-3xl font-bold text-gray-800"> Selamat datang di assessment:<br/><span class="judulquis"></span></h1>
+    
+    <!-- Deskripsi -->
+    <p class="text-gray-600 text-sm lg:text-base">
+      Sebelum memulai, pastikan kamu siap!  
+      Assesment ini berisi <span class="total-questions font-semibold text-blue-600"></span> pertanyaan, dengan waktu <span class="total-times font-semibold text-blue-600"></span> mnt. Bacalah soal dengan teliti dan pilih jawaban yang menurutmu paling tepat. Beberapa soal bisa berupa teks, kode, atau gambar. 
+      Untuk tipe <span class="font-mono text-blue-600">fill-code</span>, lengkapi bagian kosong dengan benar.
+    </p>
+
+    <!-- Aturan -->
+    <div class="bg-gray-100 rounded-xl p-4 text-left space-y-2 text-sm lg:text-base">
+      <p class="font-semibold text-gray-700">📌 Aturan Quiz:</p>
+      <ul class="list-disc list-inside text-gray-600 space-y-1">
+     
+      </ul>
+    </div>
+
+    <!-- Tombol Mulai -->
+   <button id="startQuizBtn" 
+      class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">
+      Mulai Quiz 🚀
+    </button>
+    </div>
+</div>
+<!-- ==== Countdown Overlay ==== -->
+<div id="countdownOverlay" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
+  <span id="countdownNumber" class="text-white text-6xl font-bold"></span>
+</div>
+
+
+  <!-- NAVBAR -->
+<nav class="bg-white shadow px-6 py-3 hidden " id="quiz-navbar">
+
+  <!-- Quiz Info -->
+  <div class="flex justify-between items-center mt-1 text-sm">
+    <div>
+      <span class="judulquis font-semibold text-gray-800"></span>
+      <p class="text-xs text-gray-500 mt-0.5">
+        <i class="fa-solid fa-book"></i><span class="total-questions pl-1 pr-0.5"> </span>Questions • 
+        <i  class="fa-solid fa-clock"></i><span  class="total-times pl-1 pr-0.5"></span>min
+      </p>
+    </div>
+
+    <div id="timeLeftBar" class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold ">
+      <i class="fa-solid fa-hourglass-half"></i> Time Left: 
+      <span id="timer">00:00</span>
+    </div>
+
+   <button id="DoneQuizBtn"
+  class="inline-flex items-center hidden gap-2 px-3 py-2 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition"
+  aria-label="Selesai Quiz">
+  <!-- SVG check-circle -->
+  <svg aria-hidden="true" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414L9 13.414l4.707-4.707z" clip-rule="evenodd"/>
+  </svg>
+  Selesai Quiz
+</button>
+
+  </div>
+
+   
+  <!-- Progress Bar -->
+  <div class="mt-2 progress-bar">
+    <div class="w-full bg-gray-200 rounded-full h-1.5">
+      <div id="progress-bar" class="bg-blue-500 h-1.5 rounded-full w-1/12"></div>
+    </div>
+    <p class="text-xs text-gray-500 mt-1 text-right">
+      Question <span id="current-question"></span> of 
+      <span class="total-questions"></span>
+    </p>
+  </div>
+</nav>
+
+  <!-- QUIZ BODY -->
+<section class="max-w-4xl mx-auto mt-6 bg-white p-6 rounded-2xl shadow px-4 hidden" id="quiz-container">
+    <div id="quiz-question"></div>
+
+    <!-- NAVIGATION BUTTONS -->
+    <div class="mt-6 flex justify-between">
+      <button id="prevBtn" class="bg-gray-200 px-5 py-2 rounded-lg hover:bg-gray-300 disabled:opacity-50" disabled>
+        <i class="fa-solid fa-arrow-left"></i> Prev
+      </button>
+      <button id="nextBtn" class="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50" disabled>
+        Next <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- SUBMIT BUTTON -->
+    <div class="mt-6 text-center hidden" id="submitContainer">
+      <button onclick="submitQuiz()" class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600">
+        <i class="fa-solid fa-paper-plane"></i> Submit Quiz
+      </button>
+    </div>
+  </section>
+
+  <!-- RESULT SECTION -->
+<section id="result-section" class="hidden max-w-4xl mx-auto my-8 space-y-8 px-4">
+  <h2 class="text-2xl font-bold text-center">Quiz Results</h2>
+
+<div id="result-stats" class="grid grid-cols-2 lg:grid-cols-2 gap-2 lg:gap-6"></div>
+  <!-- Question & Answers -->
+  <div id="result-container" class="space-y-6"></div>
+</section>
+
+
+
+<!-- Prism.js untuk highlight code -->
+ <!-- Chart.js -->
+
+<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-javascript.min.js"></script>
+<script>
+
+</script>
+<script>
+
+  // Data dari Flask
+const assessmentData = {{ data|tojson }};
+const questionData = {{ questions|tojson }};
+const currentUser = "{{ username }}";
+let timeLeft = (assessmentData.timming || 0) * 60; 
+let xpTotal = assessmentData.xp_total || 0;
+let quizTitle = assessmentData.title || "Assessment";
+let AssessmentId = "{{ assessment_id }}";
+
+let userAnswers = [];
+let currentQuestion = 0;
+let timerUsed = 0; 
+let timerInterval;
+
+// Ambil semua elemen dengan class .judulquis
+document.querySelectorAll(".judulquis").forEach(el => {
+  el.innerText = assessmentData.title;
+});
+
+  const rulesList = document.querySelector(".list-disc");
+
+rulesList.innerHTML = "";
+
+assessmentData.rules.forEach(rule => {
+  const li = document.createElement("li");
+  li.textContent = rule;
+  rulesList.appendChild(li);
+});
+
+</script>
+
+<script>
+  // === DOM Selector ===
+const preQuizSection = document.getElementById("preQuizSection");
+const startQuizBtn = document.getElementById("startQuizBtn");
+const countdownOverlay = document.getElementById("countdownOverlay");
+const countdownNumber = document.getElementById("countdownNumber");
+const quizNavbar = document.getElementById("quiz-navbar");
+const quizContainer = document.getElementById("quiz-container");
+const timerElement = document.getElementById("timer");
+
+const quizQuestionEl = document.getElementById("quiz-question");
+const currentQEl = document.getElementById("current-question");
+const totalQEl = document.querySelectorAll(".total-questions");
+const TotalTime = document.querySelectorAll(".total-times");
+const progressBar = document.getElementById("progress-bar");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const submitContainer = document.getElementById("submitContainer");
+
+totalQEl.forEach(el => {
+  el.innerText = questionData.length;
+});
+TotalTime.forEach(el => {
+  el.innerText = Math.floor(timeLeft / 60);
+});
+
+// ---- Helper: escape HTML (agar <, >, &, " tidak dirender) ----
+function escapeHtml(str) {
+  return String(str == null ? "" : str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// ---- Helper: render block code yang aman untuk innerHTML ----
+function renderCodeBlock(code, lang = "language-js", small = false) {
+  const sizeClasses = small ? "text-xs lg:text-sm p-2 rounded-md bg-gray-100 text-gray-800" : "bg-[#111828] text-gray-100 text-sm lg:text-base font-mono px-3 py-2 rounded-lg";
+  return `
+    <div class="${small ? "" : "flex justify-center"}">
+      <div class="${small ? "" : "rounded-lg overflow-hidden shadow w-full max-w-2xl"}">
+        <pre class="${sizeClasses} whitespace-pre-wrap break-words"><code class="${lang}">${escapeHtml(code)}</code></pre>
+      </div>
+    </div>
+  `;
+}
+function renderSmartText(str, isCode = false) {
+  if (!str) return "";
+
+  // cek apakah ada tag [fs] / [fr]
+  const mode = str.endsWith("[fs]") ? "fs" :
+               str.endsWith("[fr]") ? "fr" : null;
+
+  const clean = str.replace(/\[fs\]$|\[fr\]$/, ""); // hapus suffix
+
+  if (mode === "fs") {
+    // selalu tampilkan sebagai code/escape
+    return isCode ? renderCodeBlock(clean, "language-html", true) 
+                  : `<span class="font-mono bg-gray-100 text-red-600 px-1 rounded">${escapeHtml(clean)}</span>`;
+  } 
+  else if (mode === "fr") {
+    // render langsung HTML
+    return clean;
+  } 
+  else {
+    // default fallback
+    return isCode ? renderCodeBlock(clean, "language-html", true)
+                  : escapeHtml(clean);
+  }
+}
+
+// ---- Helper: render template fill-code (masukkan input di posisi 'fill') ----
+function renderFillTemplate(template) {
+  // regex match: fill[angka] atau fill
+  const regex = /fill(\[(\d+)\])?/g;
+  let cursor = 0;
+  let html = '<pre class="whitespace-pre-wrap break-words">';
+  let match;
+  let index = 0;
+
+  while ((match = regex.exec(template)) !== null) {
+    // tambahkan teks sebelum 'fill'
+    html += escapeHtml(template.slice(cursor, match.index));
+
+    // panjang input (default 10 kalau tidak ada angka)
+    const maxLen = match[2] ? parseInt(match[2], 10) : 10;
+
+    html += `<input id="fillInput-${index}" 
+      class="bg-transparent border-b-2 border-yellow-400 focus:border-green-400 
+             text-yellow-200 px-1 mx-0.5 w-${maxLen * 2} text-sm lg:text-base font-mono 
+             placeholder-gray-500 outline-none transition" 
+      placeholder="..." maxlength="${maxLen}" />`;
+
+    index++;
+    cursor = regex.lastIndex;
+  }
+
+  // sisanya setelah fill terakhir
+  html += escapeHtml(template.slice(cursor));
+  html += "</pre>";
+  return html;
+}
+
+
+// ==== Render Question (revisi) ====
+function loadQuestion() {
+  const q = questionData[currentQuestion];
+  currentQEl.textContent = currentQuestion + 1;
+  progressBar.style.width = `${((currentQuestion + 1) / questionData.length) * 100}%`;
+
+  // --- Question Renderer ---
+  let questionHTML = "";
+if (typeof q.question === "string") {
+  if (q.type === "code") {
+    questionHTML = renderSmartText(q.question, true);
+  } else {
+    questionHTML = `<p class="text-[13px] lg:text-base">${renderSmartText(q.question)}</p>`;
+  }
+} else if (typeof q.question === "object") {
+  questionHTML = `
+    <div class="flex flex-col lg:flex-row items-center gap-4">
+      <div class="flex-1 text-center lg:text-left">
+        ${q.question.text ? `<p class="mb-3 text-[13px] lg:text-base">${renderSmartText(q.question.text)}</p>` : ""}
+        ${q.question.code ? renderSmartText(q.question.code, true) : ""}
+      </div>
+      ${q.question.image ? `
+        <div class="flex-1 flex justify-center lg:justify-end">
+          <img src="${q.question.image}" class="rounded-lg max-h-48 lg:max-h-60 object-contain" alt="question-image">
+        </div>` : ""}
+    </div>`;
+}
+
+  // --- Options Renderer ---
+  let optionsHTML = "";
+  if (q.type === "fill-code") {
+    // tampilkan template dengan input (menggunakan renderFillTemplate yang melakukan escape)
+    optionsHTML = `
+      <div class="bg-gray-900 text-gray-100 font-mono p-4 rounded-xl text-sm lg:text-base shadow-inner overflow-x-auto">
+        ${renderFillTemplate(q.inputs[0])}
+      </div>
+    `;
+  } else if (Array.isArray(q.options)) {
+    optionsHTML = q.options.map((opt, idx) => {
+      let inner = "";
+
+     if (typeof opt === "string") {
+  inner = `<p class="text-[13px] lg:text-sm">${renderSmartText(opt)}</p>`;
+} else {
+  if (opt.text) inner += `<p class="text-[13px] lg:text-sm">${renderSmartText(opt.text)}</p>`;
+  if (opt.code) inner += renderSmartText(opt.code, true);
+        if (opt.image) {
+          // gabungkan text/code + image layout
+          inner = `
+            <div class="flex flex-col lg:flex-row items-center gap-3 w-full">
+              <div class="flex-1 text-center lg:text-left">
+                ${opt.text ? `<p class="text-[13px] lg:text-sm">${escapeHtml(opt.text)}</p>` : ""}
+                ${opt.code ? renderCodeBlock(opt.code, "language-js", true) : ""}
+              </div>
+              <div class="flex-1 flex justify-center lg:justify-end">
+                <img src="${opt.image}" class="h-14 lg:h-20 rounded-lg" alt="option-image">
+              </div>
+            </div>`;
+        }
+      }
+
+      const isSelected = userAnswers[currentQuestion] === idx;
+      return `
+        <div 
+          class="option-card flex flex-col lg:flex-row items-center gap-3 p-3 lg:p-4 rounded-xl cursor-pointer transition-all duration-300
+          ${isSelected ? "border-2 border-green-500 shadow-md ring-2 ring-green-200" : "border border-gray-200 hover:border-blue-300"}"
+          data-index="${idx}"
+        >
+          ${inner}
+        </div>`;
+    }).join("");
+  }
+
+  // --- Render ke DOM ---
+  quizQuestionEl.innerHTML = `
+    <div class="bg-gray-50 p-4 lg:p-6 rounded-xl shadow mb-4">
+      ${questionHTML}
+    </div>
+    <div class="p-4 lg:p-5 rounded-xl space-y-3 bg-white shadow">
+      ${optionsHTML}
+    </div>
+  `;
+
+  // highlight code setelah element ada di DOM
+  Prism.highlightAll();
+
+  // set button disabled logic: untuk fill-code pastikan semua placeholder terisi
+  prevBtn.disabled = currentQuestion === 0;
+  if (q.type === "fill-code") {
+    const ua = userAnswers[currentQuestion];
+    nextBtn.disabled = !ua || ua.includes("fill");
+  } else {
+    nextBtn.disabled = userAnswers[currentQuestion] === undefined;
+  }
+}
+
+// ==== Input Handler ====
+// klik opsi
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".option-card")) {
+    const card = e.target.closest(".option-card");
+    const idx = parseInt(card.dataset.index, 10);
+
+    // Simpan jawaban
+    userAnswers[currentQuestion] = idx;
+
+    // Reset semua card kelas selected
+    document.querySelectorAll(".option-card").forEach(el => {
+      el.classList.remove("border-2", "border-green-500", "ring-2", "ring-green-200", "shadow-md");
+      el.classList.add("border", "border-gray-200", "hover:border-blue-300");
+    });
+
+    // Set card terpilih
+    card.classList.remove("border", "border-gray-200", "hover:border-blue-300");
+    card.classList.add("border-2", "border-green-500", "ring-2", "ring-green-200", "shadow-md");
+
+    nextBtn.disabled = false;
+  }
+});
+
+// ==== Input Handler khusus fill-code ====
+// update userAnswers saat user mengetik di input fill
+document.addEventListener("input", (e) => {
+  if (e.target && e.target.id && e.target.id.startsWith("fillInput")) {
+    const q = questionData[currentQuestion];
+    const template = q.inputs[0];
+
+    // ambil semua input values berurutan
+    const values = Array.from(document.querySelectorAll("[id^=fillInput]")).map(inp => inp.value || "");
+
+    // apply sequential replacement 'fill' -> value
+    let filled = String(template);
+    values.forEach(val => {
+      filled = filled.replace("fill", val || "fill");
+    });
+
+    userAnswers[currentQuestion] = filled;
+
+    // aktifkan tombol next hanya kalau semua "fill" sudah terganti (tidak ada substring 'fill')
+    nextBtn.disabled = filled.includes("fill") || filled.trim() === "";
+  }
+});
+
+
+
+// ==== Navigasi ====
+nextBtn.addEventListener("click", () => {
+  if (currentQuestion < questionData.length - 1) {
+    currentQuestion++;
+    loadQuestion();
+    if (currentQuestion === questionData.length - 1) {
+      nextBtn.classList.add("hidden");
+      submitContainer.classList.remove("hidden");
+    }
+  }
+});
+
+prevBtn.addEventListener("click", () => {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    loadQuestion();
+    nextBtn.classList.remove("hidden");
+    submitContainer.classList.add("hidden");
+  }
+});
+
+// ==== Timer ====
+function updateTimer() {
+  let minutes = Math.floor(timeLeft / 60);
+  let seconds = timeLeft % 60;
+  timerElement.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+
+  if (timeLeft > 0) {
+    timeLeft--;
+    timerUsed++;
+  } else {
+    clearInterval(timerInterval);
+    forceSubmitQuiz(); // waktu habis
+  }
+}
+
+// === Countdown Start ===
+function startCountdown(callback) {
+  let count = 3;
+  countdownOverlay.classList.remove("hidden");
+  countdownNumber.textContent = count;
+
+  const countdownInterval = setInterval(() => {
+    count--;
+    if (count > 0) {
+      countdownNumber.textContent = count;
+    } else {
+      clearInterval(countdownInterval);
+      countdownOverlay.classList.add("hidden");
+      callback(); // jalankan quiz setelah countdown selesai
+    }
+  }, 1200);
+}
+
+// === Start Quiz Event ===
+startQuizBtn.addEventListener("click", () => {
+  // sembunyikan info quiz
+  preQuizSection.classList.add("hidden");
+
+  // mulai countdown 3..2..1
+  startCountdown(() => {
+    // tampilkan quiz
+    quizNavbar.classList.remove("hidden");
+    quizContainer.classList.remove("hidden");
+
+    // reset timer
+    timeLeft = (assessmentData.timming || 0) * 60;
+    timerUsed = 0;
+
+    // mulai timer
+    timerInterval = setInterval(updateTimer, 1000);
+
+    loadQuestion();
+  });
+});
+
+// ==== Evaluasi Jawaban ====
+function submitQuiz() {
+  let correct = 0, wrong = 0;
+  questionData.forEach((q, idx) => {
+    if (q.type === "fill-code") {
+      if ((userAnswers[idx] || "").trim() === q.answer.trim()) correct++;
+      else wrong++;
+    } else {
+      if (userAnswers[idx] === q.answer) correct++;
+      else wrong++;
+    }
+  });
+  alert(`Benar: ${correct}, Salah: ${wrong}`);
+}
+function renderResults() {
+  const container = document.getElementById("result-container");
+  container.innerHTML = "";
+ 
+  questionData.forEach((q, idx) => {
+    // --- Question Renderer ---
+    let questionHTML = "";
+    if (typeof q.question === "string") {
+      if (q.type === "code") {
+        questionHTML = `
+          <div class="flex justify-center">
+            <div class="rounded-lg overflow-hidden shadow w-full max-w-2xl">
+              <pre class="bg-[#111828] text-gray-100 p-3 text-xs sm:text-sm lg:text-base font-mono whitespace-pre-wrap break-words">
+<span class="language-js">${escapeHtml(q.question)}</span>
+              </pre>
+            </div>
+          </div>`;
+      } else if (q.type === "image") {
+        questionHTML = `
+          <div class="flex justify-center">
+            <img src="${q.question}" class="rounded-lg max-h-40 sm:max-h-48 lg:max-h-60 object-contain">
+          </div>`;
+      } else {
+        questionHTML = `<p class="text-xs sm:text-sm lg:text-base">${q.question}</p>`;
+      }
+    } else if (typeof q.question === "object") {
+      questionHTML = `
+        <div class="flex flex-col lg:flex-row items-center gap-4">
+          <div class="flex-1 text-center lg:text-left">
+            ${q.question.text ? `<p class="mb-3 text-xs sm:text-sm lg:text-base">${q.question.text}</p>` : ""}
+            ${q.question.code ? `
+              <div class="flex justify-center">
+                <div class="rounded-lg overflow-hidden shadow w-full max-w-2xl">
+                  <pre class="bg-[#111828] text-gray-100 px-3 py-2 text-xs sm:text-sm lg:text-base font-mono whitespace-pre-wrap break-words">
+<span class="text-green-400 font-mono">${escapeHtml(q.question.code)}</span>
+                  </pre>
+                </div>
+              </div>` : ""}
+          </div>
+          ${q.question.image ? `
+          <div class="flex-1 flex justify-center lg:justify-end">
+            <img src="${q.question.image}" class="rounded-lg max-h-40 sm:max-h-48 lg:max-h-60 object-contain">
+          </div>` : ""}
+        </div>`;
+    }
+
+    // --- Options Renderer ---
+    let optionsHTML = "";
+    if (q.type === "fill-code") {
+      optionsHTML = `
+        <div class="bg-gray-900 text-gray-100 font-mono p-3 rounded-lg text-xs sm:text-sm lg:text-base shadow-inner">
+          <div class="whitespace-pre-wrap break-words">${userAnswers[idx] || "<i class='text-gray-400'>No answer</i>"}</div>
+        </div>
+        <p class="mt-2 text-xs sm:text-sm text-green-600"><b>Correct:</b> ${q.answer}</p>
+      `;
+    } else if (Array.isArray(q.options)) {
+      optionsHTML = q.options.map((opt, optIdx) => {
+        let inner = "";
+        if (typeof opt === "string") {
+          inner = `<p class="text-[10px] sm:text-xs lg:text-sm">${escapeHtml(opt)}</p>`;
+        } else {
+          inner = `
+            <div class="flex flex-col lg:flex-row items-center gap-2 sm:gap-3 w-full">
+              <div class="flex-1 text-center lg:text-left">
+                ${opt.text ? `<p class="text-[10px] sm:text-xs lg:text-sm">${opt.text}</p>` : ""}
+                ${opt.code ? `
+                  <div class="flex justify-center mt-1">
+                    <div class="rounded-lg overflow-hidden shadow w-full max-w-md">
+                      <pre class="bg-[#111828] text-gray-100 px-2 py-1 
+                                  text-[9px] sm:text-[11px] lg:text-sm font-mono 
+                                  whitespace-pre-wrap break-words leading-relaxed min-h-0">
+<span class="text-green-400 font-mono">${escapeHtml(opt.code)}</span>
+                      </pre>
+                    </div>
+                  </div>` : ""}
+              </div>
+              ${opt.image ? `
+              <div class="flex-1 flex justify-center lg:justify-end">
+                <img src="${opt.image}" 
+                     class="w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 rounded-lg object-contain">
+              </div>` : ""}
+            </div>`;
+        }
+
+        let borderClass = "border-gray-300";
+        const unanswered = userAnswers[idx] === undefined;
+        if (unanswered) {
+          borderClass = (optIdx === q.answer) ? "border-green-500" : "border-red-500";
+        } else {
+          if (optIdx === q.answer) borderClass = "border-green-500";
+          if (userAnswers[idx] === optIdx && optIdx !== q.answer) borderClass = "border-red-500";
+        }
+
+        return `
+          <div class="p-2 sm:p-3 lg:p-4 mb-2 sm:mb-3 lg:mb-4 border-2 rounded-lg ${borderClass}">
+            ${inner}
+          </div>
+        `;
+      }).join("");
+    }
+
+    // --- Render ke DOM ---
+    container.innerHTML += `
+      <div class="bg-white shadow rounded-xl p-4 mb-4">
+        <h3 class="font-semibold mb-3 text-sm sm:text-base lg:text-lg">Q${idx + 1}.</h3>
+        ${questionHTML}
+        <div class="mt-3 space-y-2">${optionsHTML}</div>
+      </div>
+    `;
+  });
+
+  Prism.highlightAll();
+}
+
+// helper buat amanin tampilan code
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function renderStats(correct, wrong) {
+  const total = questionData.length;
+  const scorePercent = Math.round((correct / total) * 100);
+  const xpEarned = Math.round(xpTotal * (scorePercent / 100));
+
+  const statsHTML = `
+<div class="bg-white rounded-lg lg:rounded-xl shadow p-2 lg:p-4 flex flex-col justify-between">
+  <h3 class="text-[12px] lg:text-base font-semibold text-gray-700 mb-2 text-center">Questions Overview</h3>
+  <div class="grid grid-cols-3 gap-2 lg:gap-4 text-center">
+    <div>
+      <p class="text-[9px] lg:text-xs text-gray-500">Total</p>
+      <p class="text-[12px] lg:text-xl font-bold text-gray-800" id="stat-total">${total}</p>
+    </div>
+    <div>
+      <p class="text-[9px] lg:text-xs text-gray-500">Correct</p>
+      <p class="text-[12px] lg:text-xl font-bold text-green-600" id="stat-correct">0</p>
+    </div>
+    <div>
+      <p class="text-[9px] lg:text-xs text-gray-500">Wrong</p>
+      <p class="text-[12px] lg:text-xl font-bold text-red-600" id="stat-wrong">0</p>
+    </div>
+  </div>
+  <div class="mt-2 lg:mt-4">
+    <div class="w-full bg-gray-200 h-[3px] lg:h-[6px] rounded-full overflow-hidden">
+      <div class="h-[3px] lg:h-[6px] bg-green-500 transition-all duration-1000 ease-out" style="width:${(correct/total)*100}%"></div>
+    </div>
+    <p class="text-[9px] lg:text-xs text-gray-500 mt-1">Correct ratio</p>
+  </div>
+</div>
+
+
+<!-- Card 2: Performance -->
+<div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-lg lg:rounded-xl shadow p-2 lg:p-4 text-white flex flex-col justify-between">
+  <h3 class="text-[12px] lg:text-base font-semibold mb-2 text-center">Performance</h3>
+  <div class="grid grid-cols-3 gap-2 lg:gap-4 text-center">
+    <div>
+      <p class="text-[9px] lg:text-xs opacity-80">Score</p>
+      <p class="text-[12px] lg:text-xl font-bold" id="stat-score">0%</p>
+    </div>
+    <div>
+      <p class="text-[9px] lg:text-xs opacity-80">XP</p>
+      <p class="text-[12px] lg:text-xl font-bold" id="stat-xp">0</p>
+    </div>
+    <div>
+      <p class="text-[9px] lg:text-xs opacity-80">Time</p>
+      <p class="text-[12px] lg:text-xl font-bold">${Math.floor(timerUsed/60)}:${(timerUsed%60).toString().padStart(2,"0")}</p>
+    </div>
+  </div>
+  <div class="mt-2 lg:mt-4">
+    <div class="w-full bg-white/30 h-[3px] lg:h-[6px] rounded-full overflow-hidden">
+      <div class="h-[3px] lg:h-[6px] bg-yellow-300 transition-all duration-1000 ease-out" style="width:${(xpEarned/xpTotal)*100}%"></div>
+    </div>
+    <p class="text-[9px] lg:text-xs opacity-80 mt-1">XP: ${xpEarned} / ${xpTotal}</p>
+  </div>
+</div>
+
+
+  `;
+
+  document.getElementById("result-stats").innerHTML = statsHTML;
+
+  // Animasi angka
+  animateCount("stat-correct", correct);
+  animateCount("stat-wrong", wrong);
+  animateCount("stat-score", scorePercent, "%");
+  animateCount("stat-xp", xpEarned);
+}
+
+function animateCount(id, target, suffix = "") {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let current = 0;
+  const step = Math.max(1, Math.floor(target / 40));
+  const interval = setInterval(() => {
+    current += step;
+    if (current >= target) {
+      current = target;
+      clearInterval(interval);
+    }
+    el.textContent = current + suffix;
+  }, 25);
+}
+
+
+</script>
+
+  <script>   
+function forceSubmitQuiz() {
+  let correct = 0, wrong = 0;
+
+  questionData.forEach((q, idx) => {
+    if (q.type === "fill-code") {
+      if ((userAnswers[idx] || "").trim() === q.answer.trim()) correct++;
+      else wrong++;
+    } else {
+      if (userAnswers[idx] === q.answer) correct++;
+      else wrong++;
+    }
+  });
+
+  let scorePercent = Math.round((correct / questionData.length) * 100);
+  let xpEarned = Math.round(xpTotal * (scorePercent / 100));
+
+  // sembunyikan progress bar dan timer, tampilkan Done button
+  document.getElementById("timeLeftBar")?.classList.add("hidden");
+  document.querySelector("#quiz-navbar .mt-2")?.classList.add("hidden");
+  document.getElementById("DoneQuizBtn")?.classList.remove("hidden");
+
+  Swal.fire({
+    title: "Waktu Habis!",
+    html: `
+      <p><b>Total Questions:</b> ${questionData.length}</p>
+      <p><b>Correct:</b> ${correct}</p>
+      <p><b>Wrong:</b> ${wrong}</p>
+      <p><b>Score:</b> ${scorePercent}%</p>
+      <p><b>Total XP:</b> ${xpTotal}</p>
+      <p><b>XP Earned:</b> ${xpEarned}</p>
+      <p><b>Time Used:</b> ${Math.floor(timerUsed/60)}:${(timerUsed%60).toString().padStart(2,"0")}</p>
+    `,
+    icon: "info",
+    confirmButtonText: "OK"
+  }).then(() => {
+    renderStats(correct, wrong);
+    renderResults();
+    const container = document.getElementById("quiz-container");
+    container.innerHTML = "";
+    container.classList.add("hidden");
+    document.getElementById("result-section")?.classList.remove("hidden");
+  });
+}
+
+
+function submitQuiz() {
+  Swal.fire({
+    title: "Yakin menyimpan jawaban?",
+    text: "Pastikan semua jawaban sudah diisi dengan benar.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Ya, simpan",
+    cancelButtonText: "Batal"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      clearInterval(timerInterval);
+
+      // sembunyikan progress bar dan timer, tampilkan Done button
+      document.getElementById("timeLeftBar")?.classList.add("hidden");
+      document.querySelector(".progress-bar")?.classList.add("hidden");
+      document.getElementById("DoneQuizBtn")?.classList.remove("hidden");
+
+      let correct = 0, wrong = 0;
+
+      questionData.forEach((q, idx) => {
+        if (q.type === "fill-code") {
+          if ((userAnswers[idx] || "").trim() === q.answer.trim()) correct++;
+          else wrong++;
+        } else {
+          if (userAnswers[idx] === q.answer) correct++;
+          else wrong++;
+        }
+      });
+
+      let scorePercent = Math.round((correct / questionData.length) * 100);
+      let xpEarned = Math.round(xpTotal * (scorePercent / 100));
+
+      Swal.fire({
+        title: "Quiz Completed!",
+        html: `
+          <p><b>Total Questions:</b> ${questionData.length}</p>
+          <p><b>Correct:</b> ${correct}</p>
+          <p><b>Wrong:</b> ${wrong}</p>
+          <p><b>Score:</b> ${scorePercent}%</p>
+          <p><b>Total XP:</b> ${xpTotal}</p>
+          <p><b>XP Earned:</b> ${xpEarned}</p>
+          <p><b>Time Used:</b> ${Math.floor(timerUsed/60)}:${(timerUsed%60).toString().padStart(2,"0")}</p>
+        `,
+        icon: "success",
+        confirmButtonText: "OK"
+      }).then(() => {
+        renderStats(correct, wrong);
+        renderResults();
+        const container = document.getElementById("quiz-container");
+        container.innerHTML = "";
+        container.classList.add("hidden");
+        document.getElementById("result-section")?.classList.remove("hidden");
+      });
+
+     
+
+    }
+  });
+}
+
+ 
+      document.getElementById("DoneQuizBtn").addEventListener("click", function() {
+  let correct = 0, wrong = 0;
+
+  questionData.forEach((q, idx) => {
+    if (q.type === "fill-code") {
+      if ((userAnswers[idx] || "").trim() === q.answer.trim()) correct++;
+      else wrong++;
+    } else {
+      if (userAnswers[idx] === q.answer) correct++;
+      else wrong++;
+    }
+  });
+
+  let scorePercent = Math.round((correct / questionData.length) * 100);
+  let xpEarned = Math.round(xpTotal * (scorePercent / 100));
+  let duration = `${Math.floor(timerUsed/60)} menit ${timerUsed % 60} detik`;
+
+  // Data yang akan dikirim
+  const resultData = {
+    username: currentUser,
+    assessment_id: AssessmentId,
+    correct_answers: correct,
+    wrong_answers: wrong,
+    exp_earned: xpEarned,
+    duration: duration
+  };
+console.log(resultData)
+  // Kirim ke backend pakai AJAX
+$.ajax({
+  url: "/done_assessment",
+  method: "POST",
+  contentType: "application/json",
+  data: JSON.stringify(resultData),
+  success: function (res) {
+    console.log("✅ Result saved:", res);
+    Swal.fire({
+      title: "Hasil Tersimpan!",
+      text: "Jawabanmu sudah dikirim ke server.",
+      icon: "success",
+      confirmButtonText: "OK",
+      allowOutsideClick: false,
+      allowEscapeKey: false
+    }).then(() => {
+      window.location.href = `/`;
+    });
+  },
+  error: function (err) {
+    console.error("❌ Error saving result:", err);
+    Swal.fire({
+      title: "Gagal Menyimpan!",
+      text: "Terjadi kesalahan saat mengirim data.",
+      icon: "error",
+      confirmButtonText: "OK",
+      allowOutsideClick: false,
+      allowEscapeKey: false
+    });
+  }
+});
+
+});
+
+  </script>
+</body>
+</html>

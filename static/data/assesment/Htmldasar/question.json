@@ -1,0 +1,161 @@
+[
+  {
+    "type": "text",
+    "question": "Apa kepanjangan dari HTML?",
+    "options": ["HyperText Markup Language[fs]", "HighText Machine Language[fs]", "Hyperlink and Text Markup[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "HTML terutama digunakan untuk?",
+    "options": ["Menulis logika aplikasi server[fs]", "Membuat struktur dan konten halaman web[fs]", "Menyimpan data ke database[fs]"],
+    "answer": 1
+  },
+  {
+    "type": "text",
+    "question": "Struktur HTML dasar yang benar adalah…",
+    "options": ["<html> <head> <body> </body> </head> </html>[fs]", "<head> <body> <html> </html> </body> </head>[fs]", "<html> <body> <head> </head> </body> </html>[fs]", "<html> <head> </head> <body> </body> </html>[fs]"],
+    "answer": 3
+  },
+  {
+    "type": "text",
+    "question": "Tag untuk membuat paragraf adalah?",
+    "options": ["<p>[fs]", "<para>[fs]", "<text>[fs]", "<paragraph>[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "hybrid",
+    "question": {
+      "text": "Apa yang akan tampil di browser?",
+      "code": "<h1>Halo Dunia</h1>[fs]"
+    },
+    "options": ["<h1 style=\"font-weight:bold;\">Halo Dunia</h1>[fr]", "<p>Halo Dunia<p>[fr]", "Nothing[fr]"],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "Tag heading terbesar adalah?",
+    "options": ["<h1>[fs]", "<h3>[fs]", "<h6>[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "code",
+    "question": "<div class='card'>Konten</div>[fs]",
+    "options": [
+      "Membuat sebuah pembungkus elemen dengan class 'card'[fs]",
+      "Menampilkan teks \"class=card\"[fs]",
+      "Menjalankan fungsi JavaScript[fs]"
+    ],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "Tag <br> berfungsi untuk?",
+    "options": ["Menentukan ukuran gambar[fs]", "Membuat garis horizontal[fs]", "Membuat baris baru[fs]"],
+    "answer": 2
+  },
+  {
+    "type": "fill-code",
+    "question": {
+      "text": "Lengkapi tag berikut agar menampilkan gambar 'gunung.jpg' dengan alt 'Gunung'."
+    },
+    "inputs": ["<img fill[4]='fill[12]' fill[4]='fill[8]'>[fs]"],
+    "answer": "<img src='gunung.jpg' alt='Gunung'>[fs]"
+  },
+  {
+    "type": "text",
+    "question": "Perbedaan `id` dan `class` adalah?",
+    "options": ["`id` unik, `class` bisa dipakai banyak elemen[fs]", "`class` unik, `id` bisa dipakai banyak elemen[fs]", "Tidak ada perbedaan[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "hybrid",
+    "question": {
+      "text": "Mana code yang benar untuk menampilkan teks di bawah ?",
+      "code": "<p style='color:green'>Teks</p>[fr]"
+    },
+    "options": [
+      "<p style='color:green'>Teks</p>[fs]",
+      "<p style=color:green>Teks</p>[fs]",
+      "<p style='font:green'>Teks</p>[fs]"
+    ],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "Tag <hr> berguna untuk?",
+    "options": ["Membuat baris baru[fs]", "Membuat garis horizontal[fs]", "Menutup dokumen[fs]"],
+    "answer": 1
+  },
+  {
+    "type": "code",
+    "question": "/* Contoh sintaks CSS */\nselector { property: value; }[fs]",
+    "options": [
+      "Struktur dasar penulisan aturan CSS[fr]",
+      "Cara menulis HTML[fr]",
+      "Perintah JavaScript[fr]"
+    ],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "Selector CSS untuk memilih elemen dengan class 'card' adalah?",
+    "options": ["card[fs]", "#card[fs]", ".card[fs]"],
+    "answer": 2
+  },
+  {
+    "type": "text",
+    "question": "Properti CSS untuk merubah warna teks adalah?",
+    "options": ["color: red;[fs]", "text-color: red;[fs]", "font-color: red;[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "hybrid",
+    "question": {
+      "text": "Apa perbedaan utama antara margin dan padding?",
+      "code": "div { margin: 20px; padding: 10px; }[fs]"
+    },
+    "options": [
+      "Margin memberi jarak di dalam elemen, padding memberi jarak di luar elemen[fr]",
+      "Margin memberi jarak di luar elemen, padding memberi jarak di dalam elemen[fr]",
+      "Margin dan padding sama saja[fr]",
+      "Margin hanya untuk teks, padding hanya untuk gambar[fr]"
+    ],
+    "answer": 1
+  },
+  {
+    "type": "text",
+    "question": "Properti untuk mengatur ukuran huruf adalah?",
+    "options": ["font-size[fs]", "text-size[fs]", "size-font[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "fill-code",
+    "question": {
+      "text": "Lengkapi CSS berikut untuk memberi warna background blue pada elemen div."
+    },
+    "inputs": ["div { fill[15]: fill[6]; }[fs]"],
+    "answer": "div { background-color: blue; }[fs]"
+  },
+  {
+    "type": "code",
+    "question": "h1 { position: absolute; top: 0; right: 0; }[fs]",
+    "options": [
+      "Heading ditempatkan di pojok kanan atas halaman[fs]",
+      "Heading berada di posisi normal[fs]",
+      "Heading tersembunyi[fs]"
+    ],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "Apa perbedaan utama antara HTML dan CSS?",
+    "options": [
+      "HTML digunakan untuk mendesain warna dan tata letak, CSS untuk menulis konten teks[fs]",
+      "HTML dan CSS adalah hal yang sama[fs]",
+      "CSS digunakan untuk menyimpan data seperti database[fs]",
+      "HTML digunakan untuk membuat struktur dan konten halaman, sedangkan CSS untuk mengatur tampilan dan gaya[fs]"
+    ],
+    "answer": 3
+  }
+]

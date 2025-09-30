@@ -1,0 +1,92 @@
+<section class="w-[1250px] grid grid-cols-1 lg:grid-cols-12 gap-4">
+  <div class="lg:col-span-12 w-full">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold">👥 Manajemen Pengguna</h2>
+      <div class="flex gap-2">
+        <button onclick="resetKuis()" class="text-sm px-3 py-1.5 bg-yellow-600 hover:bg-yellow-700 rounded text-white">🔄 Reset Kuis</button>
+        <button onclick="exportData()" class="text-sm px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded text-white">📥 Export</button>
+      </div>
+    </div>
+    <div class="w-full overflow-x-auto max-h-[400px] overflow-y-auto rounded-md border border-zinc-700">
+      <table class="w-full table-auto text-sm">
+        <thead class="sticky top-0 bg-[var(--bg-panel)] z-10 text-dim">
+          <tr>
+            <th class="py-2 px-4 text-left min-w-[120px]">Nama</th>
+            <th class="py-2 px-4 text-left min-w-[100px]">Total Poin</th>
+            <th class="py-2 px-4 text-left min-w-[120px]">Kuis Selesai</th>
+            <th class="py-2 px-4 text-left min-w-[140px]">Slide Saat Ini</th>
+            <th class="py-2 px-4 text-left min-w-[100px]">Status</th>
+            <th class="py-2 px-4 text-left min-w-[120px]">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody" class="text-bright">
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<script>
+  const usersList = [
+    {
+      nama: "user",
+      poin: 85,
+      kuisSelesai: 3,
+      slide: { quezzId: 2, no: 5 },
+      online: true
+    },
+    {
+      nama: "user1",
+      poin: 72,
+      kuisSelesai: 2,
+      slide: { quezzId: 1, no: 4 },
+      online: false
+    },
+    {
+      nama: "user2",
+      poin: 91,
+      kuisSelesai: 4,
+      slide: { quezzId: 3, no: 2 },
+      online: true
+    },
+  ];
+
+  function renderUserTable() {
+    const tbody = document.getElementById("userTableBody");
+    tbody.innerHTML = "";
+    usersList.forEach((user, i) => {
+      const statusIcon = user.online ? "🟢 Online" : "⚪ Offline";
+      const row = `
+        <tr>
+          <td class="py-2 px-4">${user.nama}</td>
+          <td class="py-2 px-4">${user.poin}</td>
+          <td class="py-2 px-4">${user.kuisSelesai}</td>
+          <td class="py-2 px-4">#${user.slide.quezzId} / ${user.slide.no}</td>
+          <td class="py-2 px-4">${statusIcon}</td>
+          <td class="py-2 px-4">
+            <button class="text-blue-400 hover:underline mr-2">🔍</button>
+            <button class="text-yellow-400 hover:underline mr-2">✏️</button>
+            <button class="text-red-500 hover:underline">🗑️</button>
+          </td>
+        </tr>`;
+      tbody.insertAdjacentHTML("beforeend", row);
+    });
+  }
+
+  function resetKuis() {
+    alert("Semua kuis berhasil di-reset (dummy)");
+  }
+
+  function exportData() {
+    const blob = new Blob([JSON.stringify(users, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "data_user.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  renderUserTable();
+</script>
+

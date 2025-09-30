@@ -1,0 +1,435 @@
+<section class="lg:col-span-8">
+<div id="quezzSection" class="hidden">
+  <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+    <h2 class="text-lg font-semibold">📌 Daftar Quezz</h2>
+    <div class="flex gap-2">
+      <select id="filterMapel"
+        class="bg-[var(--bg-panel)] text-sm text-bright px-3 py-2 rounded-md border border-zinc-600">
+        <option value="all">Semua Kategori</option>
+        <option value="matematika">Matematika</option>
+        <option value="bahasa">Bahasa</option>
+        <option value="inggris">Inggris</option>
+        <option value="tkj">TKJ</option>
+      </select>
+      <button onclick="buatQuezz()"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm">➕ Buat Quezz</button>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto max-h-[400px] overflow-y-auto rounded-md border border-zinc-700">
+    <table class="min-w-full text-sm">
+      <thead class="sticky top-0 bg-[var(--bg-panel)] z-10">
+        <tr class="text-left text-dim">
+          <th class="py-2 px-4">Judul Quezz</th>
+          <th class="py-2 px-4">Tanggal Dibuat</th>
+          <th class="py-2 px-4">Kategori</th>
+          <th class="py-2 px-4">Status</th>
+          <th class="py-2 px-4">Poin</th>
+          <th class="py-2 px-4">User Selesai</th>
+        </tr>
+      </thead>
+      <tbody id="taskTableBody" class="text-bright">
+        <!-- Baris Quezz -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Tabel Absensi -->
+<div id="absensiSection" class="block">
+  <h2 class="text-lg font-semibold mb-4">📋 Daftar Absensi</h2>
+  <div class="overflow-x-auto max-h-[400px] overflow-y-auto rounded-md border border-zinc-700">
+    <table class="min-w-full text-sm">
+      <thead class="sticky top-0 bg-[var(--bg-panel)] z-10">
+        <tr class="text-left text-dim">
+          <th class="py-2 px-4">Nama</th>
+          <th class="py-2 px-4">Status</th>
+          <th class="py-2 px-4">Tanggal</th>
+        </tr>
+      </thead>
+      <tbody id="absensiTableBody" class="text-bright">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Tombol Update -->
+  <div class="flex justify-end mt-4">
+    <button onclick="submitAbsensi()" class="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white">
+      ✅ Update Absensi
+    </button>
+  </div>
+</div>
+
+
+</section>
+  <!-- Modal Result Absensi -->
+  <div id="resultModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-[var(--bg-panel)] rounded-lg shadow-lg w-3/4 max-w-2xl p-4 flex flex-col">
+      <h2 class="text-lg font-semibold mb-4">📋 Hasil Absensi</h2>
+
+      <div class="overflow-y-auto max-h-60 border border-zinc-700 rounded">
+        <table class="min-w-full text-sm">
+          <thead class="sticky top-0 bg-[var(--bg-panel)]">
+            <tr class="text-left text-dim">
+              <th class="py-2 px-4">Nama</th>
+              <th class="py-2 px-4">Status</th>
+              <th class="py-2 px-4">Tanggal</th>
+            </tr>
+          </thead>
+          <tbody id="resultTableBody" class="text-bright"></tbody>
+        </table>
+      </div>
+
+      <!-- Input Topik -->
+      <div class="mt-4">
+        <label class="block text-sm font-medium mb-1">📝 Topik Hari Ini</label>
+        <input id="topikInput" type="text" class="w-full px-3 py-2 rounded border border-zinc-600 bg-transparent text-bright" placeholder="Isi topik hari ini...">
+      </div>
+
+      <!-- Footer -->
+      <div class="flex justify-end gap-2 mt-4">
+        <button onclick="closeResultModal()" class="px-4 py-2 rounded bg-gray-600 hover:bg-gray-700 text-white">❌ Batal</button>
+        <button onclick="finalizeAbsensi()" class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white">✅ Update</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Reason -->
+<div id="reasonModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-[var(--bg-panel)] rounded-lg shadow-lg w-96 p-4">
+    <h2 id="reasonModalTitle" class="text-lg font-semibold mb-4">🩺 Alasan</h2>
+    <input id="reasonInput" type="text" class="w-full px-3 py-2 rounded border border-zinc-600 bg-transparent text-bright" placeholder="Masukkan alasan...">
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button onclick="closeReasonModal()" class="px-4 py-2 rounded bg-gray-600 hover:bg-gray-700 text-white">❌ Batal</button>
+      <button onclick="saveReason()" class="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white">✅ OK</button>
+    </div>
+  </div>
+</div>
+<!-- Modal Edit Tanggal -->
+<div id="dateModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-[var(--bg-panel)] rounded-lg shadow-lg w-80 p-4 flex flex-col">
+    <h2 class="text-lg font-semibold mb-4">📅 Edit Tanggal</h2>
+
+    <input id="dateInput" type="date" 
+      class="w-full px-3 py-2 rounded border border-zinc-600 bg-transparent text-bright" />
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button onclick="closeDateModal()" 
+        class="px-4 py-2 rounded bg-gray-600 hover:bg-gray-700 text-white">❌ Cancel</button>
+      <button onclick="applyDateChange()" 
+        class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white">✅ Oke</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+  const tasks = [
+   
+     {
+      title: "Kuis Bahasa Indonesia",
+      tanggal: "2025-07-26",
+      mapel: "bahasa",
+      status: "pending",
+      poin: 15,
+      selesai: 5
+    }
+  ];
+
+  let currentEditIndex = -1;
+
+  function renderTasks() {
+    const filterValue = document.getElementById("filterMapel").value;
+    const tbody = document.getElementById("taskTableBody");
+    tbody.innerHTML = "";
+
+    const filteredTasks = filterValue === "all"
+      ? tasks
+      : tasks.filter(task => task.mapel === filterValue);
+
+    filteredTasks.forEach((task, index) => {
+      const row = document.createElement("tr");
+      row.className = "hover:bg-[var(--bg-panel)] transition";
+
+      row.innerHTML = `
+        <td class="px-4 py-2 font-medium cursor-pointer text-blue-400 hover:underline" data-index="${index}">${task.title}</td>
+        <td class="px-4 py-2">${task.tanggal}</td>
+        <td class="px-4 py-2 capitalize">${task.mapel}</td>
+        <td class="px-4 py-2">
+          <select class="bg-zinc-800 text-white text-xs px-2 py-1 rounded" onchange="ubahStatus(${index}, this.value)">
+            <option value="active" ${task.status === "active" ? "selected" : ""}>Active</option>
+            <option value="unactive" ${task.status === "unactive" ? "selected" : ""}>Unactive</option>
+            <option value="pending" ${task.status === "pending" ? "selected" : ""}>Pending</option>
+          </select>
+        </td>
+        <td class="px-4 py-2">${task.poin}</td>
+        <td class="px-4 py-2">${task.selesai}</td>
+      `;
+
+      // Hanya kolom judul yang memicu modal
+      const judulCell = row.querySelector("td");
+      judulCell.addEventListener("click", () => bukaModalEdit(index));
+
+      tbody.appendChild(row);
+    });
+  }
+
+  document.getElementById("filterMapel").addEventListener("change", renderTasks);
+
+  // Init render
+  renderTasks();
+</script>
+
+
+<script>
+  function toggleView() {
+    const quezzSection = document.getElementById("quezzSection");
+    const absensiSection = document.getElementById("absensiSection");
+    const toggleBtn = document.getElementById("toggleViewBtn");
+    const toggleText = document.getElementById("toggleViewText");
+
+    if (quezzSection.classList.contains("hidden")) {
+      quezzSection.classList.remove("hidden");
+      absensiSection.classList.add("hidden");
+      toggleText.innerText = "Absensi";
+    } else {
+      quezzSection.classList.add("hidden");
+      absensiSection.classList.remove("hidden");
+      toggleText.innerText = "Quezz";
+    }
+  }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+const statusList = ["-", "Hadir", "Izin", "Sakit"];
+
+// users dikirim dari Flask: const users = {{ users_data|safe }};
+// Pastikan variable asal ada di template
+let users = {{ users_data|safe }};
+
+// Normalisasi: pastikan setiap item punya `username`, `nama`, `status`, `tanggal`, `reason`
+users = users.map(u => ({
+  nama: u.nama || u.name || u.username || "",
+  username: u.username || u.nama || u.name || "",
+  status: (u.status === undefined || u.status === null) ? "-" : u.status,
+  tanggal: u.tanggal || "-",
+  reason: u.reason || null
+}));
+
+// Render tabel absensi utama
+function renderAbsensiTable() {
+  const tbody = document.getElementById("absensiTableBody");
+  tbody.innerHTML = "";
+
+  users.forEach((user, index) => {
+    const tr = document.createElement("tr");
+    tr.dataset.index = index;
+    tr.className = "cursor-pointer";
+    tr.onclick = () => toggleAbsensi(index);
+
+    const tdName = document.createElement("td");
+    tdName.className = "py-2 px-4";
+    tdName.textContent = user.nama;
+
+    const tdStatus = document.createElement("td");
+    tdStatus.className = "py-2 px-4";
+    tdStatus.textContent = user.status;
+
+    const tdDate = document.createElement("td");
+    tdDate.className = "py-2 px-4";
+    tdDate.textContent = user.tanggal;
+
+    tr.appendChild(tdName);
+    tr.appendChild(tdStatus);
+    tr.appendChild(tdDate);
+
+    tbody.appendChild(tr);
+  });
+}
+
+// Toggle status dan tanggal
+function toggleAbsensi(index) {
+  const user = users[index];
+  let currentIndex = statusList.indexOf(user.status);
+  if (currentIndex === -1) currentIndex = 0;
+  let nextIndex = (currentIndex + 1) % statusList.length;
+  let nextStatus = statusList[nextIndex];
+
+  user.status = nextStatus;
+  user.tanggal = nextStatus !== "-" ? new Date().toISOString().split("T")[0] : "-";
+
+  renderAbsensiTable();
+}
+
+// Show Result Modal (build rows dengan event listener)
+function submitAbsensi() {
+  const tbody = document.getElementById("resultTableBody");
+  tbody.innerHTML = "";
+
+  users.forEach((u, i) => {
+    // fallback status & tanggal
+    let status = (u.status === "-" || !u.status) ? "Alpa" : u.status;
+    let tanggal = (u.tanggal && u.tanggal !== "-") ? u.tanggal : new Date().toISOString().split("T")[0];
+
+    // simpan tanggal ke users
+    u.tanggal = tanggal;
+
+    const tr = document.createElement("tr");
+
+    const tdNama = document.createElement("td");
+    tdNama.className = "py-2 px-4";
+    tdNama.textContent = u.nama || u.username;
+
+    const tdStatus = document.createElement("td");
+    tdStatus.className = "py-2 px-4";
+
+    // jika Sakit/Izin -> buat span yang bisa diklik untuk alasan
+    if (status === "Sakit" || status === "Izin") {
+      const span = document.createElement("span");
+      span.className = "text-yellow-400 underline cursor-pointer";
+      span.textContent = status + (u.reason ? ` (${u.reason})` : "");
+      // event click buka modal reason (stopPropagation agar row onclick tidak ikut)
+      span.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        openReasonModal(i, status);
+      });
+      tdStatus.appendChild(span);
+    } else {
+      tdStatus.textContent = status;
+    }
+
+    const tdTanggal = document.createElement("td");
+tdTanggal.className = "py-2 px-4 underline cursor-pointer text-blue-400";
+tdTanggal.textContent = tanggal;
+tdTanggal.addEventListener("click", function (ev) {
+  ev.stopPropagation(); // supaya tidak trigger row
+  openDateModal(u.tanggal);
+});
+
+
+    tr.appendChild(tdNama);
+    tr.appendChild(tdStatus);
+    tr.appendChild(tdTanggal);
+
+    tbody.appendChild(tr);
+  });
+
+  // tampilkan modal hasil
+  const resultModal = document.getElementById("resultModal");
+  resultModal.classList.remove("hidden");
+  resultModal.classList.add("flex");
+
+ 
+}
+
+// Close Result Modal
+function closeResultModal() {
+  const resultModal = document.getElementById("resultModal");
+  resultModal.classList.add("hidden");
+  resultModal.classList.remove("flex");
+}
+
+// Finalize Absensi (kirim ke backend)
+function finalizeAbsensi() {
+  const topik = document.getElementById("topikInput").value;
+
+  const resultData = users.map(u => {
+    const status = (u.status === "-" || !u.status) ? "Alpa" : u.status;
+    return {
+      username: u.username || u.nama,
+      tanggal: u.tanggal || new Date().toISOString().split("T")[0],
+      status: status,
+      alasan: (status === "Sakit" || status === "Izin") ? (u.reason || null) : null,
+      pembahasan: topik || "-"
+    };
+  });
+
+  console.log("Data Final Absensi:", resultData);
+
+  // AJAX jQuery
+  $.ajax({
+    url: "/finalize_absensi",
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify(resultData),
+    success: function (res) {
+      console.log("✅ Absensi tersimpan:", res);
+      alert("Absensi berhasil disimpan!");
+      closeResultModal();
+    },
+    error: function (xhr, status, err) {
+      console.error("❌ Gagal simpan absensi:", err, xhr.responseText);
+      alert("Gagal menyimpan absensi!");
+    }
+  });
+}
+
+// Reason modal
+let currentReasonIndex = null;
+let currentReasonType = null;
+
+function openReasonModal(index, type) {
+  currentReasonIndex = index;
+  currentReasonType = type;
+  document.getElementById("reasonInput").value = users[index].reason || "";
+  document.getElementById("reasonModalTitle").innerText = type === "Sakit" ? "🩺 Alasan Sakit" : "📌 Alasan Izin";
+
+  document.getElementById("reasonModal").classList.remove("hidden");
+  document.getElementById("reasonModal").classList.add("flex");
+}
+
+function closeReasonModal() {
+  document.getElementById("reasonModal").classList.add("hidden");
+  document.getElementById("reasonModal").classList.remove("flex");
+}
+
+function saveReason() {
+  const reason = document.getElementById("reasonInput").value;
+  if (currentReasonIndex !== null) {
+    users[currentReasonIndex].reason = reason;
+    users[currentReasonIndex].status = currentReasonType; // pastikan status sesuai
+  }
+  closeReasonModal();
+  // refresh result modal tabel (tetap buka)
+  submitAbsensi();
+}
+
+// inisialisasi
+renderAbsensiTable();
+</script>
+
+<script>
+  let selectedDate = null;
+
+// Open modal saat tanggal diklik
+function openDateModal(currentDate) {
+  const input = document.getElementById("dateInput");
+  input.value = currentDate && currentDate !== "-" ? currentDate : new Date().toISOString().split("T")[0];
+
+  document.getElementById("dateModal").classList.remove("hidden");
+  document.getElementById("dateModal").classList.add("flex");
+}
+
+// Close modal
+function closeDateModal() {
+  document.getElementById("dateModal").classList.add("hidden");
+  document.getElementById("dateModal").classList.remove("flex");
+}
+
+// Apply perubahan tanggal ke semua user
+function applyDateChange() {
+  const newDate = document.getElementById("dateInput").value;
+  if (!newDate) return;
+
+  users = users.map(u => ({ ...u, tanggal: newDate }));
+
+  closeDateModal();
+  renderAbsensiTable();
+  submitAbsensi(); // kalau modal hasil terbuka, refresh tabelnya
+}
+
+
+</script>

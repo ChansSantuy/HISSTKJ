@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Dashboard — Modern Clean</title>
+
+  <!-- Tailwind Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Customize Tailwind (optional)
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563EB', // blue-600
+            accent: '#10B981',  // green-500
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .card-glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(200, 200, 200, 0.3);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+    .rank-badge {
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      color: white;
+      font-weight: 700;
+    }
+  </style>
+<style>
+    /* Small tweaks for carousel scroll snap & smooth */
+    .snap-x { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+    .snap-center { scroll-snap-align: center; }
+    .card-shadow { box-shadow: 0 6px 18px rgba(16,24,40,0.06); }
+  </style>
+</head>
+<body class="bg-gray-200 font-inter antialiased text-gray-800">
+
+  <!-- NAVBAR -->
+  <nav class="bg-white max-w-7xl shadow-sm sticky top-0 mx-auto px-4 sm:px-6 lg:px-8 z-10 md:mt-5 rounded-md">
+    <div class=" ">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center gap-4">
+          <button id="btn-open-menu" class="p-2 rounded-md hover:bg-gray-100">
+            <i class="fa fa-bars text-gray-600"></i>
+          </button>
+       
+        </div>
+
+     
+
+          <!-- user -->
+          <div class="flex items-center gap-3">
+            <div class="text-right ">
+              <div id="nav_fullname" class="text-sm font-medium"></div>
+              <div id="nav_info" class="text-xs text-gray-500"></div>
+            </div>
+            <img id="nav_avatar" src="" alt="avatar" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Top cards -->
+<section class="grid grid-cols-3 gap-2 mb-6 sm:grid-cols-4">
+
+  <!-- Attendance summary -->
+<div id="attendance-card" class="bg-white rounded-lg card-shadow p-1.5 sm:p-4 text-[8px] sm:text-base"></div>
+
+<!-- Points / EXP -->
+<div id="exp-card" class="bg-white rounded-lg card-shadow p-1.5 sm:p-4 text-[8px] sm:text-base flex flex-col justify-between h-full"></div>
+
+<!-- Progress Level -->
+<div id="progress-card" class="bg-white rounded-lg card-shadow p-1.5 sm:p-4 text-[8px] sm:text-base flex flex-col justify-between h-full"></div>
+ 
+  <!-- Assessment Card -->
+<div id="assessment-card" 
+  class="bg-white rounded-2xl shadow-md p-4 flex flex-col justify-between border border-gray-100 hover:shadow-lg transition
+         col-span-full sm:col-span-1 w-full max-w-md mx-auto">
+
+    <!-- Header -->
+    <div class="flex justify-between items-start">
+      <div>
+        <div id="assessment-timing" 
+          class="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600 uppercase inline-block">
+          Assessment
+        </div>
+        <h3 id="assessment-title" 
+          class="mt-2 font-semibold text-base sm:text-lg text-gray-800 leading-snug">
+          Assessment Title
+        </h3>
+      
+      </div>
+      <div class="text-2xl sm:text-3xl text-indigo-500">
+        <i class="fa fa-clock"></i>
+      </div>
+    </div>
+
+    <!-- Meta Info (simple) -->
+    <div class="flex items-center justify-between text-xs text-gray-600 mt-1">
+      <div>
+        <div class="font-medium text-gray-800">Close</div>
+        <div id="assessment-close" class="text-gray-500"></div>
+      </div>
+      <div>
+        <div class="font-medium text-gray-800">Duration</div>
+        <div id="assessment-timming" class="text-gray-500"></div>
+      </div>
+      <div>
+        <div class="font-medium text-gray-800">XP</div>
+        <div id="assessment-xp" class="text-gray-500"></div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="mt-3 flex gap-2">
+      <button id="btn-start-assessment" 
+        class="flex-1 bg-gradient-to-r from-indigo-500 to-blue-500 text-white py-2 rounded-lg hover:opacity-90 transition text-xs sm:text-sm font-medium flex items-center justify-center gap-2">
+        <i class="fa fa-play"></i> Start
+      </button>
+      <button id="btn-view-details" 
+        class="flex items-center gap-2 border border-gray-200 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition text-xs sm:text-sm font-medium">
+        <i class="fa fa-info-circle"></i> Details
+      </button>
+    </div>
+  </div>
+
+
+<!-- Modal -->
+<div id="details-modal" 
+  class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+
+  <!-- Modal Card -->
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative animate-fade-in">
+    
+    <!-- Close Button -->
+    <button id="close-modal" 
+      class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition">
+      <i class="fa fa-times text-lg"></i>
+    </button>
+
+    <!-- Title -->
+    <h2 id="modal-title" 
+      class="text-2xl font-bold text-gray-800 mb-2 tracking-tight">
+      Assessment Title
+    </h2>
+
+    <!-- Description -->
+    <p id="modal-description" 
+      class="text-sm text-gray-600 leading-relaxed mb-4">
+      Assessment description will appear here.
+    </p>
+
+    <!-- Meta Info -->
+    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700 mb-4 ">
+      <!-- Created At -->
+      <div class="bg-gray-50 rounded-lg p-3">
+        <p class="text-xs text-gray-500 uppercase">Created At</p>
+        <p id="modal-created" class="font-medium text-gray-800">-</p>
+      </div>
+
+      <!-- XP + Duration -->
+      <div class="bg-gray-50 rounded-lg p-3 items-center text-center">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs text-gray-500 uppercase items-center text-center">XP Total</p>
+            <p id="modal-xp" class="font-medium text-indigo-600">0 XP</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 uppercase items-center text-center">Duration</p>
+            <p id="modal-timming" class="font-medium text-gray-800">0 menit</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- User Result -->
+<div id="modal-user-result" class="hidden border-t pt-4">
+  <h3 class="text-sm font-semibold text-gray-800 mb-3">Your Result</h3>
+
+  <!-- Single Card -->
+  <div class="bg-gray-50 rounded-lg p-3 flex justify-between items-center text-center">
+    <div class="flex-1">
+      <p class="text-[11px] text-gray-500 uppercase">Duration</p>
+      <p id="res-duration" class="font-medium text-gray-700 text-sm">-</p>
+    </div>
+    <div class="flex-1">
+      <p class="text-[11px] text-gray-500 uppercase">Correct</p>
+      <p id="res-correct" class="font-medium text-blue-600 text-sm">-</p>
+    </div>
+    <div class="flex-1">
+      <p class="text-[11px] text-gray-500 uppercase">Wrong</p>
+      <p id="res-wrong" class="font-medium text-red-600 text-sm">-</p>
+    </div>
+    <div class="flex-1">
+      <p class="text-[11px] text-gray-500 uppercase">XP</p>
+      <p id="res-xp" class="font-medium text-purple-600 text-sm">-</p>
+    </div>
+  </div>
+</div>
+
+
+  </div>
+</div>
+
+<!-- Animasi -->
+<style>
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.25s ease-out forwards;
+  }
+</style>
+
+
+</section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- MAIN COLUMN (col-span 2 on large) -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Quiz carousel -->
+<div class="bg-white rounded-2xl card-shadow p-3 sm:p-4 hidden">
+  <div class="flex items-center justify-between mb-3 sm:mb-4">
+    <div>
+      <h3 class="text-sm sm:text-lg font-semibold">Available Quizzes</h3>
+      <p class="text-[10px] sm:text-sm text-gray-500">Quizzes assigned to you — swipe to browse</p>
+    </div>
+    <div class="flex items-center gap-1 sm:gap-2">
+      <button class="p-1.5 sm:p-2 rounded-md hover:bg-gray-100" id="quiz-prev">
+        <i class="fa fa-chevron-left text-xs sm:text-base"></i>
+      </button>
+      <button class="p-1.5 sm:p-2 rounded-md hover:bg-gray-100" id="quiz-next">
+        <i class="fa fa-chevron-right text-xs sm:text-base"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Carousel container -->
+<div id="quiz-carousel" class="overflow-x-auto snap-x flex gap-3 sm:gap-4 py-2 px-1">
+  <!-- Card quiz akan diisi JS -->
+</div>
+
+</div>
+
+<!-- Notes from teacher -->
+<div class="bg-white rounded-2xl shadow-sm p-3 sm:p-5">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-3 sm:mb-4">
+    <div>
+      <h3 class="text-base sm:text-lg font-semibold text-gray-800">Notes / Messages</h3>
+      <p class="text-xs sm:text-sm text-gray-500">Latest guidance and reminders</p>
+    </div>
+    <button id="btn-new-note" 
+      class="flex items-center gap-1 text-[11px] sm:text-sm px-2 sm:px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-50 transition">
+      <i class="fa fa-plus text-[10px] sm:text-xs"></i> New
+    </button>
+  </div>
+
+  <!-- Notes list (dynamic) -->
+  <div id="notes-list" class="space-y-3 sm:space-y-4"></div>
+</div>
+
+
+      <!-- Attendance Records -->
+<div class="bg-white rounded-2xl shadow-sm p-3 sm:p-5">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-3 sm:mb-4">
+    <div>
+      <h3 class="text-sm sm:text-lg font-semibold text-gray-800">Attendance Records</h3>
+      <p class="text-[10px] sm:text-sm text-gray-500">Recent absences & presence</p>
+    </div>
+
+    <!-- Right: Pagination (top) + Month dropdown (below) -->
+    <div class="flex flex-col items-end gap-0">
+      <!-- Pagination -->
+     <div class="flex items-center gap-1">
+  <button id="att-prev" 
+    class="px-1.5 py-0.5 text-[9px] sm:text-[10px] border rounded-md hover:bg-gray-50 disabled:opacity-40"
+    aria-label="Previous page">
+    <i class="fa fa-chevron-left text-[9px] sm:text-[10px]"></i>
+  </button>
+  <button id="att-next" 
+    class="px-1.5 py-0.5 text-[9px] sm:text-[10px] border rounded-md hover:bg-gray-50 disabled:opacity-40"
+    aria-label="Next page">
+    <i class="fa fa-chevron-right text-[9px] sm:text-[10px]"></i>
+  </button>
+</div>
+
+
+      <!-- Month filter (dropdown under pagination) -->
+      <div class="relative w-28 text-right">
+        <button id="month-filter-btn" class="w-full text-[10px] sm:text-sm text-gray-500 px-2 py-1 rounded-lg  hover:bg-gray-50 flex items-center justify-end gap-2">
+          <span id="month-label"></span>
+          <i class="fa fa-chevron-down text-xs"></i>
+        </button>
+
+        <div id="month-dropdown" class="absolute right-0 mt-1 w-full bg-white border rounded-lg shadow-md hidden z-20">
+          <!-- options injected by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards container -->
+  <div id="attendance-list" class="space-y-2 sm:space-y-3"></div>
+</div>
+
+
+      </div>
+
+<aside class="space-y-6 flex flex-col">
+  <!-- Profile & progress 
+  <div class="bg-white rounded-2xl card-shadow p-4 order-2 sm:order-1">
+    <div class="flex items-center gap-3">
+      <img src="https://i.pravatar.cc/80?img=5" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-sm">
+      <div>
+        <div class="font-semibold text-lg">Channs</div>
+        <div class="text-xs text-gray-500">XI IPA • Student</div>
+        <div class="mt-3 text-sm">
+          <div class="text-xs text-gray-500">Overall Average</div>
+          <div class="font-semibold text-xl">85%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <div class="text-xs text-gray-500 mb-1">Level Progress</div>
+      <div class="w-full bg-gray-100 rounded-full h-3">
+        <div class="h-3 rounded-full" style="width:64%; background:linear-gradient(90deg,#34D399,#60A5FA)"></div>
+      </div>
+      <div class="text-xs text-gray-500 mt-2">Level 4 • 64% to next level</div>
+    </div>
+  </div>
+-->
+ 
+ 
+<div class="max-w-md w-full rounded-2xl p-6 bg-white/80 backdrop-blur-lg shadow-xl">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h3 class="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <i class="fas fa-crown text-blue-500"></i>
+        Leaderboard
+      </h3>
+      <p class="text-sm text-gray-500">Top students this month</p>
+    </div>
+    <div class="text-xs sm:text-sm text-gray-400">Live</div>
+  </div>
+  <ol id="leaderboard" class="space-y-4"></ol>
+</div>
+
+  <!-- Quick actions (hidden on mobile) -->
+  <div class="bg-white rounded-2xl card-shadow p-4 hidden sm:block order-1 sm:order-3">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-semibold">Quick Actions</h3>
+      <div class="text-xs text-gray-500">Shortcuts</div>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <button class="flex items-center gap-2 px-3 py-2 rounded-lg border hover:bg-gray-50">
+        <i class="fa fa-file-lines text-gray-600"></i> Materials
+      </button>
+      <button class="flex items-center gap-2 px-3 py-2 rounded-lg border hover:bg-gray-50">
+        <i class="fa fa-upload text-gray-600"></i> Submit
+      </button>
+      <button class="flex items-center gap-2 px-3 py-2 rounded-lg border hover:bg-gray-50">
+        <i class="fa fa-comments text-gray-600"></i> Chat Teacher
+      </button>
+      <button class="flex items-center gap-2 px-3 py-2 rounded-lg border hover:bg-gray-50">
+        <i class="fa fa-certificate text-gray-600"></i> Badges
+      </button>
+    </div>
+  </div>
+</aside>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-xs text-gray-500">
+    © 2025 Learnerly • Built with ❤️
+  </footer>
+<!-- load dari static/api.js -->
+<script>
+  window.appConfig = {
+    user: {{ user|tojson }},
+    current_user: "{{ current_user }}"
+  };
+</script>
+<script src="{{ url_for('static', filename='script/api/api.js') }}"></script>
+<script>
+  const currentUser = window.appConfig.current_user;
+
+  $.ajax({
+    url: "/assessments",
+    method: "GET",
+    success: function(res) {
+      if (!res || res.length === 0) {
+        $("#assessment-card").hide();
+        return;
+      }
+
+      const assessment = res[0]; // contoh ambil 1 dulu
+      const startDate = new Date(assessment.start_at);
+      const closeDate = new Date(assessment.close_at);
+      const now = new Date();
+
+      // === Title & Meta ===
+      $("#assessment-title").text(assessment.title);
+      $("#assessment-close").text(closeDate.toLocaleString());
+      $("#assessment-timming").text(`${assessment.timming} min`);
+      $("#assessment-xp").text(`${assessment.xp_total} XP`);
+
+      // === Cek user & expired ===
+      const userResult = assessment.users.find(u => u.name === currentUser);
+      const isExpired = now > closeDate;
+
+      if (userResult || isExpired) {
+        $("#btn-start-assessment")
+          .addClass("bg-gray-300 cursor-not-allowed")
+          .removeClass("bg-gradient-to-r from-indigo-500 to-blue-500 hover:opacity-90")
+          .prop("disabled", true);
+      }
+
+      // === Button Start ===
+      $("#btn-start-assessment").on("click", function() {
+        if ($(this).prop("disabled")) return;
+
+        $.ajax({
+          url: `/start_assessment/${assessment.id}`,
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ username: currentUser }),
+          success: function() {
+            window.location.href = `/start_assessment/${assessment.id}`;
+          }
+        });
+      });
+
+      // === Button Details ===
+      $("#btn-view-details").on("click", function() {
+        $("#modal-title").text(assessment.title);
+        $("#modal-description").text(assessment.description || "-");
+        $("#modal-created").text(new Date(assessment.created_at).toLocaleString());
+        $("#modal-xp").text(assessment.xp_total);
+        $("#modal-timming").text(assessment.timming);
+
+        if (userResult) {
+          $("#modal-user-result").removeClass("hidden");
+          $("#res-duration").text(userResult.duration);
+          $("#res-correct").text(userResult.correct_answers);
+          $("#res-wrong").text(userResult.wrong_answers);
+          $("#res-xp").text(userResult.exp_earned);
+        } else {
+          $("#modal-user-result").addClass("hidden");
+        }
+
+        $("#details-modal").removeClass("hidden").addClass("flex");
+      });
+
+      $("#close-modal").on("click", function() {
+        $("#details-modal").addClass("hidden").removeClass("flex");
+      });
+    }
+  });
+</script>
+
+<script>
+ // Pastikan absensi selalu array
+  const absensi = Array.isArray({{ absensi|tojson }}) ? {{ absensi|tojson }} : [];
+
+  // Hitung jumlah hadir & absen
+  let presentCount = absensi.filter(a => a.status && a.status.toLowerCase() === "hadir").length;
+  let absentCount = absensi.filter(a => {
+    const status = a.status ? a.status.toLowerCase() : "";
+    return status === "izin" || status === "sakit";
+  }).length;
+
+  // 12 kali hadir = 100%
+  const MAX_MEETING = 12;
+  let percentage = Math.round((presentCount / MAX_MEETING) * 100);
+
+  // ✅ Achievements
+  const achievements = {{ achievements|tojson }};
+  const totalPoint = achievements.totalPoint || 0;
+
+  const levels = [
+    { level: 1, min: 0,   max: 300 },
+    { level: 2, min: 301, max: 650 },
+    { level: 3, min: 651, max: 1000 },
+    { level: 4, min: 1001, max: 1350 },
+    { level: 5, min: 1351, max: 1530 }
+  ];
+
+  let currentLevel = 1;
+  let nextLevel = null;
+  let progress = 0;
+
+  for (let i = 0; i < levels.length; i++) {
+    const lvl = levels[i];
+    if (totalPoint >= lvl.min && totalPoint <= lvl.max) {
+      currentLevel = lvl.level;
+      nextLevel = levels[i + 1] ? levels[i + 1].level : lvl.level;
+      const range = lvl.max - lvl.min;
+      const gained = totalPoint - lvl.min;
+      progress = Math.round((gained / range) * 100);
+      break;
+    }
+  }
+
+  // Data gabungan
+  const dashboardData = {
+    attendance: {
+      percentage: percentage,
+      present: presentCount,
+      absent: absentCount
+    },
+    exp: {
+      total: totalPoint,
+      nextLevel: nextLevel,
+      level: currentLevel,
+      progress: progress
+    },
+    progress: {
+      percentage: 0,
+      target: 0
+    }
+  };
+  // 🎯 Attendance card
+  const attendanceCard = document.getElementById("attendance-card");
+  attendanceCard.innerHTML = `
+    <div class="flex justify-between items-start">
+      <div>
+        <div class="text-[8px] sm:text-xs text-gray-500">Attendance</div>
+        <div class="mt-0.5 sm:mt-2 text-sm sm:text-2xl font-semibold">${dashboardData.attendance.percentage}%</div>
+        <div class="text-[8px] sm:text-sm text-gray-500">Pada semester saat ini</div>
+      </div>
+      <div class="text-base sm:text-3xl text-accent">
+        <i class="fa fa-user-check"></i>
+      </div>
+    </div>
+    <div class="mt-1 sm:mt-4 grid grid-cols-2 gap-1 text-[8px] sm:text-sm">
+      <div class="p-0.5 sm:p-2 bg-gray-50 rounded-md text-center">
+        <div class="text-[8px] sm:text-xs text-gray-500">Hadir</div>
+        <div class="font-semibold text-xs sm:text-base">${dashboardData.attendance.present}</div>
+      </div>
+      <div class="p-0.5 sm:p-2 bg-gray-50 rounded-md text-center">
+        <div class="text-[8px] sm:text-xs text-gray-500">Absent</div>
+        <div class="font-semibold text-xs sm:text-base">${dashboardData.attendance.absent}</div>
+      </div>
+    </div>
+  `;
+
+  // 🎯 EXP card
+  const expCard = document.getElementById("exp-card");
+  expCard.innerHTML = `
+    <div class="flex justify-between">
+      <div>
+        <div class="text-[8px] sm:text-xs text-gray-500">Points / EXP</div>
+        <div class="mt-0.5 sm:mt-2 text-sm sm:text-2xl font-semibold">${dashboardData.exp.total.toLocaleString()} XP</div>
+        <div class="text-[8px] sm:text-sm text-gray-500">Next level: ${dashboardData.exp.nextLevel} XP</div>
+      </div>
+      <div class="text-base sm:text-3xl text-primary">
+        <i class="fa fa-award"></i>
+      </div>
+    </div>
+    <div class="mt-2 sm:mt-4">
+      <div class="w-full bg-gray-100 rounded-full h-1 sm:h-2 overflow-hidden">
+        <div class="h-1 sm:h-2 rounded-full" style="width:${dashboardData.exp.progress}%; background:linear-gradient(90deg,#34D399,#60A5FA)"></div>
+      </div>
+      <div class="text-[8px] sm:text-xs text-gray-500 mt-1 sm:mt-2">Lv ${dashboardData.exp.level}</div>
+    </div>
+  `;
+
+  // 🎯 Progress card
+  const progressCard = document.getElementById("progress-card");
+  progressCard.innerHTML = `
+    <div class="flex justify-between items-start">
+      <div>
+        <div class="text-[8px] sm:text-xs text-gray-500">Learning Progress</div>
+        <div class="mt-0.5 sm:mt-2 text-sm sm:text-2xl font-semibold">${dashboardData.progress.percentage}%</div>
+        <div class="text-[8px] sm:text-sm text-gray-500">Module completion</div>
+      </div>
+      <div class="text-base sm:text-3xl text-yellow-500">
+        <i class="fa fa-chart-line"></i>
+      </div>
+    </div>
+    <div class="mt-2 sm:mt-4">
+      <div class="flex items-center gap-1.5 sm:gap-3 text-[8px] sm:text-sm text-gray-600">
+        <div class="flex-1">
+          <div class="h-1 sm:h-2 rounded-full bg-gray-100">
+            <div style="width:${dashboardData.progress.percentage}%; height:4px; background:#F59E0B;" class="rounded-full"></div>
+          </div>
+        </div>
+        <div class="w-6 sm:w-10 text-right font-semibold text-xs sm:text-base">${dashboardData.progress.target}%</div>
+      </div>
+    </div>
+  `;
+</script>
+
+<script>
+  $(document).ready(function () {
+    $.ajax({
+      url: "/leaderboard_list",
+      method: "GET",
+      success: function (res) {
+        let data = res.leaderboard || [];
+        
+        // hanya ambil 5 teratas
+        data = data.slice(0, 5);
+
+        const icons = [
+          "fas fa-medal text-yellow-400", // rank 1
+          "fas fa-medal text-gray-400",   // rank 2
+          "fas fa-medal text-orange-400", // rank 3
+          "fas fa-star text-blue-400",    // rank 4
+          "fas fa-star text-blue-400"     // rank 5
+        ];
+
+        const container = $("#leaderboard");
+        container.empty();
+
+        data.forEach((player, index) => {
+          const rank = index + 1;
+          const li = $("<li></li>").addClass(`
+            flex items-center justify-between
+            bg-white rounded-xl p-3 sm:p-4
+            shadow-sm hover:shadow-md 
+            transition transform hover:scale-[1.02]
+          `);
+
+          if (rank === 1) li.addClass("fire-card");
+          if (rank === 2 || rank === 3) li.addClass("shine-card");
+
+          let badgeClass = "rank-badge flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full";
+
+          li.html(`
+            <div class="flex items-center gap-3 sm:gap-4 relative z-10">
+              <div class="${badgeClass}">
+                ${rank}
+              </div>
+              <div>
+                <div class="font-semibold text-gray-800 text-sm sm:text-base">${player.name}</div>
+                <div class="text-xs sm:text-sm text-gray-500">${player.totalPoint} XP</div>
+              </div>
+            </div>
+            <div class="text-base sm:text-lg relative z-10"><i class="${icons[index]}"></i></div>
+          `);
+
+          container.append(li);
+        });
+      },
+      error: function (err) {
+        console.error("Error fetching leaderboard:", err);
+      }
+    });
+  });
+</script>
+
+<script>
+
+  // Dummy data
+  const notesData = [
+    {
+      teacher: "Chann_santuy",
+      subject: "Programming",
+      time: "-",
+      message: "semangat belajarnya geysss"
+    }
+  ];
+
+  // Mapping subject
+  const subjectMap = {
+    Math:   { icon: "fa-calculator", color: "blue" },
+    BK:     { icon: "fa-user-friends", color: "green" },
+    Programming: { icon: "fa-code", color: "indigo" },
+    "B. Indonesia": { icon: "fa-book-open", color: "red" },
+    "B. English":   { icon: "fa-language", color: "yellow" },
+    SBK:     { icon: "fa-paint-brush", color: "pink" },
+    Sport:   { icon: "fa-dumbbell", color: "emerald" },
+    Jaringan: { icon: "fa-network-wired", color: "purple" },
+    Sejarah: { icon: "fa-landmark", color: "orange" }
+  };
+
+
+  const notesList = document.getElementById("notes-list");
+
+  // Render notes
+  notesData.forEach(note => {
+    // Ambil mapping berdasarkan subject
+    const { icon, color } = subjectMap[note.subject] || { icon: "fa-sticky-note", color: "gray" };
+
+    const noteItem = document.createElement("div");
+    noteItem.className = `p-3 sm:p-4 bg-gray-50 rounded-xl border-l-4 border-${color}-400`;
+
+    noteItem.innerHTML = `
+      <div class="flex justify-between items-start">
+        <div>
+          <div class="flex items-center gap-2">
+            <i class="fa ${icon} text-${color}-500 text-xs sm:text-sm"></i>
+            <span class="text-xs sm:text-sm font-semibold">${note.teacher}</span>
+            <span class="inline-block text-[10px] sm:text-xs px-2 rounded-full bg-${color}-100 text-${color}-600 font-medium">
+              ${note.subject}
+            </span>
+          </div>
+        </div>
+        <div class="text-[10px] sm:text-xs text-gray-400">${note.time}</div>
+      </div>
+      <p class="text-[11px] sm:text-sm text-gray-700 mt-2 leading-relaxed">
+        ${note.message}
+      </p>
+    `;
+    notesList.appendChild(noteItem);
+  });
+</script>
+
+ <!-- JS -->
+  <script>
+    // Basic carousel behavior
+    const carousel = document.getElementById('quiz-carousel');
+    const prevBtn = document.getElementById('quiz-prev');
+    const nextBtn = document.getElementById('quiz-next');
+
+    prevBtn.addEventListener('click', () => {
+      carousel.scrollBy({ left: -300, behavior: 'smooth' });
+    });
+    nextBtn.addEventListener('click', () => {
+      carousel.scrollBy({ left: 300, behavior: 'smooth' });
+    });
+
+    // Start quiz buttons (SweetAlert confirmation)
+    document.querySelectorAll('.btn-start-quiz').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const quiz = btn.dataset.quiz || 'Quiz';
+        Swal.fire({
+          title: `Start ${quiz}?`,
+          text: "Make sure you're ready. Timer will start when you press Start.",
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Start now',
+          cancelButtonText: 'Later',
+          showLoaderOnConfirm: true,
+        }).then((res) => {
+          if (res.isConfirmed) {
+            // Simulate redirect to quiz
+            Swal.fire({
+              title: 'Good luck!',
+              text: `Starting ${quiz}...`,
+              icon: 'success',
+              timer: 1200,
+              showConfirmButton: false
+            });
+          }
+        });
+      });
+    });
+
+    // Add new note (demo)
+    document.getElementById('btn-new-note').addEventListener('click', () => {
+      Swal.fire({
+        title: 'Add a quick note',
+        input: 'textarea',
+        inputPlaceholder: 'Write a short message for your teacher...',
+        showCancelButton: true,
+        confirmButtonText: 'Send'
+      }).then(res => {
+        if (res.isConfirmed && res.value) {
+          Swal.fire('Sent', 'Your note has been saved (demo).', 'success');
+        }
+      });
+    });
+
+    // small: keyboard arrow control for carousel
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') carousel.scrollBy({ left: 300, behavior: 'smooth' });
+      if (e.key === 'ArrowLeft') carousel.scrollBy({ left: -300, behavior: 'smooth' });
+    });
+  </script>
+  
+<script>
+
+  const quizzes = [
+  {
+    title: "Mathematics — Algebra",
+    subject: "Class XI - 20 questions",
+    duration: "30 min",
+    deadline: "2 days left",
+    deadlineClass: "text-red-500",
+    status: "Not Started",
+    statusClass: "bg-primary",
+    btnText: "Start",
+    icon: "fa-calculator",
+    iconBg: "bg-blue-50",
+    iconColor: "text-primary",
+  },
+  {
+    title: "Bahasa — Bahasa Indonesia",
+    subject: "Class XI - 15 questions",
+    duration: "20 min",
+    deadline: "12 hours left",
+    deadlineClass: "text-yellow-500",
+    status: "Not Started",
+    statusClass: "bg-primary",
+    btnText: "Start",
+    icon: "fa-book-open",
+    iconBg: "bg-green-50",
+    iconColor: "text-accent",
+  },
+  {
+    title: "Science — Chemistry",
+    subject: "Class XI - 10 questions",
+    duration: "25 min",
+    deadline: "Today",
+    deadlineClass: "text-green-500",
+    status: "In Progress",
+    statusClass: "bg-yellow-500",
+    btnText: "Continue",
+    icon: "fa-flask",
+    iconBg: "bg-indigo-50",
+    iconColor: "text-indigo-600",
+  }
+];
+const caroussel = document.getElementById("quiz-carousel");
+
+quizzes.forEach(q => {
+  const card = document.createElement("article");
+  card.className = "min-w-[220px] sm:min-w-[280px] snap-center bg-white border rounded-xl sm:rounded-2xl p-2 sm:p-4 card-shadow text-[10px] sm:text-sm flex flex-col justify-between h-full";
+
+  card.innerHTML = `
+    <!-- Header -->
+    <div>
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-md sm:rounded-lg ${q.iconBg} flex items-center justify-center ${q.iconColor} text-sm sm:text-base">
+            <i class="fa ${q.icon}"></i>
+          </div>
+          <div>
+            <h4 class="font-semibold text-xs sm:text-base">${q.title}</h4>
+            <div class="text-[9px] sm:text-xs text-gray-500">${q.subject}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time & deadline -->
+      <div class="mt-1 text-[9px] sm:text-sm text-gray-500">
+        <div><i class="fa fa-clock mr-1"></i> ${q.duration}</div>
+        <div class="mt-0.5 sm:mt-1 text-[8px] sm:text-xs ${q.deadlineClass} font-semibold">${q.deadline}</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-2 sm:mt-4 flex items-center justify-between">
+      <div class="text-[9px] sm:text-sm text-gray-600">Status: <span class="font-medium text-gray-800">${q.status}</span></div>
+      <button class="btn-start-quiz ${q.statusClass} text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-[9px] sm:text-sm" data-quiz="${q.title}">
+        <i class="fa ${q.btnText === 'Continue' ? 'fa-rotate-right' : 'fa-play'} mr-1 sm:mr-2"></i> ${q.btnText}
+      </button>
+    </div>
+  `;
+
+  carousel.appendChild(card);
+});
+
+</script>
+
+ 
+<script>
+/* ---------- Transform data ---------- */
+const statusTranslate = {
+  Hadir: "Present",
+  Izin: "Permission",
+  Sakit: "Sick"
+};
+
+const attendanceData = absensi.map(item => {
+  return {
+    date: item.tanggal, 
+    kelas: item.pembahasan, 
+    status: statusTranslate[item.status] || "Unknown",
+    notes: item.alasan || "-"
+  };
+});
+/* ---------- CONFIG & STATE ---------- */
+const itemsPerPage = 4;
+let currentPage = 1;
+let selectedMonthKey = 'all'; // 'YYYY-MM' or 'all'
+
+/* ---------- Status -> badge mapping (color + icon classes) ---------- */
+const statusMap = {
+  Present:    { bg: 'bg-green-100', text: 'text-green-600', icon: 'fa-check' },
+  Sick:     { bg: 'bg-orange-100',text: 'text-orange-600',icon: 'fa-user-injured' },
+  Permission: { bg: 'bg-yellow-100',text: 'text-yellow-600',icon: 'fa-user-clock' },
+  Unknown:       { bg: 'bg-red-100',   text: 'text-red-600',   icon: 'fa-question'  }
+};
+const defaultStatus = { bg: 'bg-gray-100', text: 'text-gray-600', icon: 'fa-question' };
+
+/* ---------- UTILITIES ---------- */
+const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function getMonthKey(dateStr){
+  // expects YYYY-MM-DD (or valid ISO)
+  const d = new Date(dateStr + 'T00:00:00'); // force no timezone shift
+  if (isNaN(d)) return null;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function formatMonthLabel(key){
+  if (key === 'all') return 'All';
+  const [y,m] = key.split('-');
+  return `${monthNames[parseInt(m,10)-1]} ${y}`;
+}
+function safeDateSortDesc(a,b){
+  return new Date(b.date) - new Date(a.date);
+}
+
+/* ---------- DOM REFS ---------- */
+const attList = document.getElementById('attendance-list');
+const attPrevBtn = document.getElementById('att-prev');
+const attnextBtn = document.getElementById('att-next');
+const monthBtn = document.getElementById('month-filter-btn');
+const monthDropdown = document.getElementById('month-dropdown');
+const monthLabel = document.getElementById('month-label');
+
+/* ---------- Prepare data: sort by date desc ---------- */
+let sortedData = attendanceData.slice().sort(safeDateSortDesc);
+
+/* ---------- Build month options dynamically (from data) ---------- */
+function buildMonthOptions(){
+  const months = [...new Set(sortedData.map(i => getMonthKey(i.date)).filter(Boolean))];
+  // sort desc (YYYY-MM lexicographically sorts correctly)
+  months.sort((a,b)=> b.localeCompare(a));
+  // render in dropdown
+  monthDropdown.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'block w-full text-left px-3 py-2 text-xs hover:bg-gray-50';
+  allBtn.textContent = 'All months';
+  allBtn.dataset.key = 'all';
+  monthDropdown.appendChild(allBtn);
+
+  months.forEach(k => {
+    const btn = document.createElement('button');
+    btn.className = 'block w-full text-left px-3 py-2 text-xs hover:bg-gray-50';
+    btn.textContent = formatMonthLabel(k);
+    btn.dataset.key = k;
+    monthDropdown.appendChild(btn);
+  });
+
+  // event delegation for dropdown
+  monthDropdown.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      selectedMonthKey = btn.dataset.key;
+      monthLabel.textContent = `${selectedMonthKey === 'all' ? 'All' : formatMonthLabel(selectedMonthKey)}`;
+      monthDropdown.classList.add('hidden');
+      currentPage = 1;
+      renderAttendance();
+    });
+  });
+
+  // default label
+  monthLabel.textContent = `Month: ${formatMonthLabel(selectedMonthKey)}`;
+}
+
+/* ---------- Render function ---------- */
+function renderAttendance(){
+  attList.innerHTML = '';
+
+  // filter by selected month
+  const filtered = sortedData.filter(item => {
+    if (selectedMonthKey === 'all') return true;
+    return getMonthKey(item.date) === selectedMonthKey;
+  });
+
+  // pagination
+  const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * itemsPerPage;
+  const pageItems = filtered.slice(start, start + itemsPerPage);
+
+  // render each card
+  pageItems.forEach(item => {
+    const map = statusMap[item.status] || defaultStatus;
+
+    const card = document.createElement('div');
+    card.className = 'p-3 sm:p-4 bg-white rounded-xl shadow-sm border flex flex-col gap-2 transition hover:shadow-md';
+
+    // Build status badge HTML (use mapped classes)
+    const badgeHTML = `<span class="px-2 py-0.5 text-[10px] sm:text-xs rounded-full font-medium ${map.bg} ${map.text}">
+                         <i class="fa ${map.icon} mr-1"></i>${item.status}
+                       </span>`;
+
+    card.innerHTML = `
+      <!-- Header: Date & Status -->
+      <div class="flex items-center justify-between">
+        <div class="text-[11px] sm:text-sm text-gray-500 flex items-center gap-1">
+          <i class="fa fa-calendar-alt text-gray-400"></i>
+          <span>${item.date} | ${item.kelas}</span>
+        </div>
+        ${badgeHTML}
+      </div>
+
+      <!-- Notes -->
+      <div class="text-[11px] sm:text-sm text-gray-600 flex items-start gap-2">
+        <i class="fa fa-sticky-note text-gray-400 mt-0.5"></i>
+        <span>${item.notes || '-'}</span>
+      </div>
+    `;
+
+    attList.appendChild(card);
+  });
+
+  // update prev/next disabled state
+  attPrevBtn.disabled = currentPage <= 1;
+  attnextBtn.disabled = currentPage >= totalPages;
+
+  // optional: if no data show empty state
+  if (filtered.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'p-4 text-center text-sm text-gray-500 bg-gray-50 rounded-md';
+    empty.textContent = 'No attendance records for this month.';
+    attList.appendChild(empty);
+  }
+}
+
+/* ---------- Events ---------- */
+attPrevBtn.addEventListener('click', () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderAttendance();
+  }
+});
+attnextBtn.addEventListener('click', () => {
+  // compute filtered length to know total pages
+  const filteredLen = sortedData.filter(item => selectedMonthKey === 'all' ? true : getMonthKey(item.date) === selectedMonthKey).length;
+  const totalPages = Math.max(1, Math.ceil(filteredLen / itemsPerPage));
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderAttendance();
+  }
+});
+
+// month dropdown toggle (click button)
+monthBtn.addEventListener('click', (e) => {
+  monthDropdown.classList.toggle('hidden');
+});
+
+// close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (!monthBtn.contains(e.target) && !monthDropdown.contains(e.target)) {
+    if (!monthDropdown.classList.contains('hidden')) monthDropdown.classList.add('hidden');
+  }
+});
+
+/* ---------- Init ---------- */
+buildMonthOptions();
+renderAttendance();
+</script>
+
+</body>
+</html>

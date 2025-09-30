@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Siswa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-base: #001C29;
+      --bg-panel: #0E2F3F;
+      --bg-card: #173648;
+
+      --text-dim: #6C8592;
+      --text-mid: #A0B1B8;
+      --text-bright: #E2E8EB;
+
+      --accent-yellow: #F9D367;
+      --accent-blue: #3ABEFF;
+      --accent-green: #3AEF8D;
+      --accent-red: #F45C5C;
+
+      --border-color: rgba(255, 255, 255, 0.08);
+      --shadow-glow: 0 0 10px rgba(58, 190, 255, 0.2);
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-bright);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .card-muted {
+      background-color: var(--bg-panel);
+      color: var(--text-mid);
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+
+    .text-dim {
+      color: var(--text-dim);
+    }
+
+    .text-mid {
+      color: var(--text-mid);
+    }
+
+    .text-bright {
+      color: var(--text-bright);
+    }
+
+    .status-selesai {
+      background-color: var(--accent-green);
+      color: black;
+    }
+
+    .status-belum {
+      background-color: var(--accent-red);
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+<part>
+
+  <!-- Modal Edit Quezz -->
+{% include 'Admin/Component/ModalEditQuezz.html' %}
+
+<!-- Modal Buat Quezz -->
+{% include 'Admin/Component/ModalCreateQuezz.html' %}
+
+  <main class="w-full max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Statistik Cards -->
+{% include 'Admin/Component/stats.html' %}
+
+    <!-- SECTION LEFT TABLE -->
+{% include 'Admin/Component/table.html' %}
+
+
+    <!-- SECTION RIGHT CARD -->
+{% include 'Admin/Component/todo.html' %}
+
+    <!-- SECTION RIGHT CARD -->
+{% include 'Admin/Component/userManagement.html' %}
+
+  </main>
+</part>
+
+
+</body>
+
+</html>

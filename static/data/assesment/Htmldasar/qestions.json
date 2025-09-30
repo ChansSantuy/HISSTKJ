@@ -1,0 +1,304 @@
+
+[
+  {
+    "type": "text",
+    "question": "Apa kepanjangan dari HTML?",
+    "options": ["HyperText Markup Language[fs]", "HighText Machine Language[fs]", "Hyperlink and Text Markup[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "HTML terutama digunakan untuk?",
+    "options": ["Menulis logika aplikasi server[fs]", "Membuat struktur dan konten halaman web[fs]", "Menyimpan data ke database[fs]"],
+    "answer": 1
+  },
+   {
+    "type": "text",
+    "question": "Struktur HTML dasar yang benar adalah…",
+    "options": ["<html> <head> <body> </body> </head> </html>[fs]", "<head> <body> <html> </html> </body> </head>[fs]", "<html> <body> <head> </head> </body> </html>[fs]","<html> <head> </head> <body> </body> </html>[fs]"],
+    "answer": 3
+  },
+  {
+    "type": "text",
+    "question": "Tag untuk membuat paragraf adalah?",
+    "options": ["<p>[fs]", "<para>[fs]", "<text>[fs]", "<paragraph>[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "hybrid",
+    "question": {
+      "text": "Apa yang akan tampil di browser?",
+      "code": "<h1>Halo Dunia</h1>[fs]"
+    },
+    "options": ["<h1 style=\"font-weight:bold;\">Halo Dunia</h1>[fr]", "<p>Halo Dunia<p>[fr]", "Nothing[fr]"],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "Tag heading terbesar adalah?",
+    "options": ["<h1>[fs]", "<h3>[fs]", "<h6>[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "code",
+    "question": "<div class='card'>Konten</div>[fs]",
+    "options": [
+      "Membuat sebuah pembungkus elemen dengan class 'card'[fs]",
+      "Menampilkan teks \"class=card\"[fs]",
+      "Menjalankan fungsi JavaScript[fs]"
+    ],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "Tag <br> berfungsi untuk?",
+    "options": ["Menentukan ukuran gambar[fs]", "Membuat garis horizontal[fs]", "Membuat baris baru[fs]"],
+    "answer": 2
+  },
+  {
+    "type": "fill-code",
+    "question": {
+      "text": "Lengkapi tag berikut agar menampilkan gambar 'gunung.jpg' dengan alt 'Gunung'."
+    },
+    "inputs": ["<img fill[5]='fill[14]' fill[5]='fill[8]'>"],
+    "answer": "<img src='gunung.jpg' alt='Gunung'>"
+  },
+  {
+    "type": "text",
+    "question": "Perbedaan `id` dan `class` adalah?",
+    "options": ["`id` unik, `class` bisa dipakai banyak elemen[fs]", "`class` unik, `id` bisa dipakai banyak elemen[fs]", "Tidak ada perbedaan[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "hybrid",
+    "question": {
+      "text": "mana code yang benar untuk menampilkan teks di bawah ?",
+      "code": "<p style='color:green'>Teks</p>[fr]"
+    },
+    "options": [
+      "<p style='color:green'>Teks</p>[fs]",
+      "<p style=color:green>Teks</p>[fs]",
+      "<p style='font:green'>Teks</p>[fs]"
+    ],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "Elemen pembungkus elemen lain adalah?",
+    "options": ["<span>[fs]", "<div>[fs]", "<section>[fs]"],
+    "answer": 1
+  },
+  {
+    "type": "text",
+    "question": "Tag <hr> berguna untuk?",
+    "options": ["Membuat baris baru[fs]", "Membuat garis horizontal[fs]", "Menutup dokumen[fs]"],
+    "answer": 1
+  },
+  {
+  "type": "hybrid",
+  "question": {
+    "text": "Perhatikan kode berikut, apa fungsi atribut `class`?",
+    "code": "<div class='box'>Isi</div>[fs]"
+  },
+  "options": [
+    "Menghubungkan ke file CSS[fs]",
+    "Membuat komentar pada HTML[fs]",
+    "Memberi nama pada elemen agar bisa diatur dengan CSS[fs]",
+    "Mengubah warna latar belakang otomatis[fs]"
+  ],
+  "answer": 2
+},
+  {
+    "type": "code",
+    "question": "/* Contoh sintaks CSS */\nselector { property: value; }[fs]",
+    "options": [
+      "Struktur dasar penulisan aturan CSS[fr]",
+      "Cara menulis HTML[fr]",
+      "Perintah JavaScript[fr]"
+    ],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "Selector CSS untuk memilih elemen dengan class 'card' adalah?",
+    "options": ["card[fs]", "#card[fs]", ".card[fs]"],
+    "answer": 2
+  },
+  {
+    "type": "text",
+    "question": "Properti CSS untuk merubah warna teks adalah?",
+    "options":  ["color: red;[fs]", "text-color: red;[fs]", "font-color: red;[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "text",
+    "question": "Properti CSS untuk mengatur latar belakang adalah?",
+    "options": ["background-color[fs]", "bg[fs]", "color-bg[fs]"],
+    "answer": 0
+  },
+  {
+    "type": "hybrid",
+    "question": {
+      "text": "Apa yang terjadi jika menulis:",
+      "code": "p { padding: 10px; }[fs]"
+    },
+    "options": [
+      "beri jarak antar element[fs]",
+      "memberi batas dalam elemen[fs]",
+      "Mengubah ukuran font[fs]",
+      "Mengganti warna teks[fs]"
+    ],
+    "answer": 1
+  },
+  {
+    "type": "text",
+    "question": "Properti CSS untuk mengatur jarak luar antar elemen adalah?",
+    "options": ["margin[fs]", "padding[fs]", "border[fs]"],
+    "answer": 0
+  },
+  {
+  "type": "code",
+  "question": "div { width: 150px; height: 50px; }[fs]",
+  "options": [
+    "Mengatur lebar dan tinggi elemen div[fs]",
+    "Mengatur jarak luar elemen div[fs]",
+    "Memberi warna latar belakang div[fs]",
+    "Membuat teks di dalam div rata tengah[fs]"
+  ],
+  "answer": 0
+},
+{
+  "type": "hybrid",
+  "question": {
+    "text": "Apa perbedaan utama antara margin dan padding?",
+    "code": "div { margin: 20px; padding: 10px; }[fs]"
+  },
+  "options": [
+    "Margin memberi jarak di dalam elemen, padding memberi jarak di luar elemen[fr]",
+    "Margin memberi jarak di luar elemen, padding memberi jarak di dalam elemen[fr]",
+    "Margin dan padding sama saja[fr]",
+    "Margin hanya untuk teks, padding hanya untuk gambar[fr]"
+  ],
+  "answer": 1
+},
+  {
+    "type": "text",
+    "question": "Properti untuk mengubah gaya font adalah?",
+    "options": [ "font-style[fs]", "font-family[fs]","font-weight[fs]"],
+    "answer": 1
+  },
+  {
+    "type": "text",
+    "question": "Properti untuk mengatur ukuran huruf adalah?",
+    "options": ["font-size[fs]", "text-size[fs]", "size-font[fs]"],
+    "answer": 0
+  },
+  {
+  "type": "fill-code",
+  "question": {
+    "text": "Lengkapi CSS berikut untuk memberi warna latar belakang blue pada elemen div."
+  },
+  "inputs": ["div { fill[19]: fill[7]; }"],
+  "answer": "div { background-color: blue; }"
+},
+  {
+    "type": "code",
+    "question": "h1 { position: absolute; top: 0; right: 0; }[fs]",
+    "options": [
+      "Heading ditempatkan di pojok kanan atas halaman[fr]",
+      "Heading berada di posisi normal[fr]",
+      "Heading tersembunyi[fr]"
+    ],
+    "answer": 0
+  },
+ {
+  "type": "hybrid",
+  "question": {
+    "text": "CSS berikut digunakan untuk apa?",
+    "code": "div { border: 2px solid red; }[fs]"
+  },
+  "options": [
+    "Mengubah warna teks menjadi merah[fs]",
+    "Memberikan jarak di luar elemen div sebesar 2px[fs]",
+    "Membuat latar belakang div menjadi merah[fs]",
+        "Memberikan garis tepi berwarna merah setebal 2px pada elemen div[fs]"
+  ],
+  "answer": 3
+},
+  {
+  "type": "fill-code",
+  "question": {
+    "text": "Lengkapi kode CSS berikut agar elemen dengan class 'box' memiliki border 2px solid blue, padding 15px, dan background grey."
+  },
+  "inputs": [".box { border: fill[17];  fill[9]: fill[6]; background-color: fill[7]; }"],
+  "answer": ".box { border: 2px solid blue; padding: 15px; background-color: grey; }"
+},
+ {
+  "type": "fill-code",
+  "question": {
+    "text": "Lengkapi CSS berikut agar elemen memiliki border sudut tidak tajam 10px, background putih #fff [fs]."
+  },
+  "inputs": ["selector { background-color: fill[7]; border-radius: fill[6]; }"],
+  "answer": "selector {background-color: #fff; border-radius: 10px; }"
+},
+{
+  "type": "hybrid",
+  "question": {
+    "text": "Teks berikut ingin ditampilkan di posisi tengah. CSS mana yang benar?",
+    "code": "<p>\"Selamat Datang\"</p>[fr]"
+  },
+  "options": [
+    "p { text-align: center; }[fs]",
+    "p { align: middle; }[fs]",
+    "p { text-position: center; }[fs]",
+    "p { horizontal-align: center; }[fs]"
+  ],
+  "answer": 0
+},
+ {
+  "type": "text",
+  "question": "Untuk memberi background hitam pada body, CSS mana yang benar?",
+  "options": [
+    "body { background-color: black; }[fs]",
+    "body { background: #000; }[fs]",
+    "body { background-warna: black; }[fs]",
+    "body { background-set: black; }[fs]"
+  ],
+  "answer": 0
+},
+  {
+  "type": "text",
+  "question": "Apa perbedaan utama antara HTML dan CSS?",
+  "options": [
+    "HTML digunakan untuk mendesain warna dan tata letak, CSS untuk menulis konten teks[fs]",
+    "HTML dan CSS adalah hal yang sama[fs]",
+    "CSS digunakan untuk menyimpan data seperti database[fs]",
+        "HTML digunakan untuk membuat struktur dan konten halaman, sedangkan CSS untuk mengatur tampilan dan gaya[fs]"
+
+  ],
+  "answer": 3
+},
+{
+  "type": "text",
+  "question": "Ada berapa cara utama untuk menambahkan CSS ke dalam HTML?",
+  "options": [
+    "3 cara: inline, internal, dan external[fs]",
+    "2 cara: inline dan external[fs]",
+    "4 cara: inline, internal, external, dan import ke database[fs]",
+    "1 cara saja: hanya inline CSS[fs]"
+  ],
+  "answer": 0
+},
+{
+  "type": "text",
+  "question": "mana penulisan inline CSS dan internal CSS yang benar?",
+  "options": [
+    "Inline CSS → <style> p { color:red; } </style> [fs], Internal CSS → file.css terpisah [fs]",
+        "Inline CSS → <p style='color:red'>Teks</p> [fs], Internal CSS → <style> p { color:red; } </style> [fs]",
+    "Inline CSS → hanya untuk <p> [fs], Internal CSS → hanya untuk <div>[fs]",
+    "Tidak ada bedanya, keduanya sama saja [fs]"
+  ],
+  "answer": 1
+}
+
+]

@@ -1,0 +1,173 @@
+<div id="modalBuatQuezz" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white rounded-lg w-full max-w-2xl p-6 shadow-lg overflow-y-auto max-h-[90vh]">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold">➕ Buat Quezz</h3>
+      <button onclick="tutupModalBuat()" class="text-zinc-500 hover:text-red-500 text-xl">&times;</button>
+    </div>
+    <form id="formBuatQuezz" class="space-y-4" onsubmit="submitQuezz(event)">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block mb-1 font-medium">Judul Quezz</label>
+          <input type="text" id="judulQuezz" class="w-full px-3 py-2 border rounded bg-zinc-100 dark:bg-zinc-700 focus:outline-none" required>
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Kategori</label>
+          <input type="text" id="kategoriQuezz" class="w-full px-3 py-2 border rounded bg-zinc-100 dark:bg-zinc-700 focus:outline-none">
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Deskripsi</label>
+          <textarea id="deskripsiQuezz" rows="2" class="w-full px-3 py-2 border rounded bg-zinc-100 dark:bg-zinc-700 focus:outline-none"></textarea>
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Difficult</label>
+          <select id="difficultQuezz" class="w-full px-3 py-2 border rounded bg-zinc-100 dark:bg-zinc-700">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Poin</label>
+          <input type="number" id="poinQuezz" class="w-full px-3 py-2 border rounded bg-zinc-100 dark:bg-zinc-700 focus:outline-none" value="0">
+        </div>
+        <div>
+          <label class="block mb-1 font-medium">Status Quezz</label>
+          <select id="statusQuezz" class="w-full px-3 py-2 border rounded bg-zinc-100 dark:bg-zinc-700">
+            <option value="pending">Pending</option>
+            <option value="active">Active</option>
+            <option value="unactive">Unactive</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <button type="button" onclick="addQuestion()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded text-white">➕ Add Question</button>
+        <button type="button" onclick="uploadJSON()" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded text-white ml-2">📤 Upload JSON</button>
+      </div>
+      <div id="questionContainer" class="space-y-4"></div>
+      <div class="flex justify-end gap-2 pt-4">
+        <button type="button" onclick="tutupModalBuat()" class="px-4 py-2 bg-zinc-500 hover:bg-zinc-600 rounded text-white">Cancel</button>
+        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white">Create Quezz</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  let createQuestions = [];
+
+  function buatQuezz() {
+    document.getElementById('modalBuatQuezz').classList.remove('hidden');
+    createQuestions = [];
+    document.getElementById('formBuatQuezz').reset();
+    renderQuestionList();
+  }
+
+  function tutupModalBuat() {
+    document.getElementById('modalBuatQuezz').classList.add('hidden');
+  }
+
+  function addQuestion() {
+    createQuestions.push({ mode: 'text', question: '', extra: '', options: ['', '', '', ''], answer: '' });
+    renderQuestionList();
+  }
+
+  function removeQuestion(index) {
+    createQuestions.splice(index, 1);
+    renderQuestionList();
+  }
+
+  function updateQuestion(index, value) {
+    createQuestions[index].question = value;
+  }
+
+  function updateMode(index, mode) {
+    createQuestions[index].mode = mode;
+    renderQuestionList();
+  }
+
+  function updateOption(index, idx, value) {
+    createQuestions[index].options[idx] = value;
+  }
+
+  function updateAnswer(index, letter) {
+    createQuestions[index].answer = letter;
+  }
+
+  function renderQuestionList() {
+    const container = document.getElementById('questionContainer');
+    container.innerHTML = '';
+    createQuestions.forEach((q, idx) => {
+      const card = document.createElement('div');
+      card.className = 'card bg-zinc-900 p-4 rounded space-y-2 relative';
+      card.setAttribute('data-id', idx);
+      card.innerHTML = `
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-medium">Question ${idx + 1}</span>
+          <button onclick="removeQuestion(${idx})" class="text-red-400 hover:text-red-500 font-bold">−</button>
+        </div>
+        <div>
+          <label class="text-sm">Pertanyaan:</label>
+          <textarea oninput="updateQuestion(${idx}, this.value)" class="w-full px-2 py-1 rounded bg-zinc-800 mt-1" placeholder="Masukkan isi pertanyaan...">${q.question}</textarea>
+        </div>
+        <div>
+          <label class="text-sm">Mode:</label>
+          <select onchange="updateMode(${idx}, this.value)" class="w-full px-2 py-1 rounded bg-zinc-800 mt-1">
+            <option value="text" ${q.mode==='text'?'selected':''}>Text</option>
+            <option value="image" ${q.mode==='image'?'selected':''}>Image</option>
+            <option value="code" ${q.mode==='code'?'selected':''}>Code</option>
+            <option value="custom" ${q.mode==='custom'?'selected':''}>Custom HTML</option>
+          </select>
+        </div>
+        <div id="qBody${idx}" class="space-y-2"></div>
+        <div class="grid grid-cols-2 gap-2 mt-2">
+          ${['A','B','C','D'].map((letter, i) => `
+            <label class="flex items-center gap-2">
+              <input type="radio" name="answer${idx}" value="${letter}" ${q.answer===letter?'checked':''} onchange="updateAnswer(${idx}, '${letter}')">
+              <input placeholder="Option ${letter}" value="${q.options[i]}" oninput="updateOption(${idx}, ${i}, this.value)" class="w-full px-2 py-1 rounded bg-zinc-800">
+            </label>
+          `).join('')}
+        </div>
+      `;
+      container.appendChild(card);
+      renderQuestionBody(idx);
+    });
+  }
+
+  function renderQuestionBody(index) {
+    const q = createQuestions[index];
+    const body = document.getElementById(`qBody${index}`);
+    body.innerHTML = '';
+    if (!q) return;
+    if (q.mode === 'image') {
+      body.innerHTML = `<input placeholder="Image URL..." value="${q.extra}" oninput="createQuestions[${index}].extra=this.value" class="w-full px-2 py-1 rounded bg-zinc-800">`;
+    } else if (q.mode === 'code') {
+      body.innerHTML = `<textarea rows="3" placeholder="Code snippet..." oninput="createQuestions[${index}].extra=this.value" class="w-full px-2 py-1 rounded bg-zinc-800">${q.extra}</textarea>`;
+    } else if (q.mode === 'custom') {
+      body.innerHTML = `<textarea rows="4" placeholder="HTML custom..." oninput="createQuestions[${index}].extra=this.value" class="w-full px-2 py-1 rounded bg-zinc-800">${q.extra}</textarea>`;
+    }
+  }
+
+  function uploadJSON() {
+    alert('📤 Upload JSON belum diimplementasikan');
+  }
+
+  function submitQuezz(event) {
+    event.preventDefault();
+    const data = {
+      title: document.getElementById('judulQuezz').value,
+      category: document.getElementById('kategoriQuezz').value,
+      description: document.getElementById('deskripsiQuezz').value,
+      difficult: document.getElementById('difficultQuezz').value,
+      point: parseInt(document.getElementById('poinQuezz').value),
+      status: document.getElementById('statusQuezz').value,
+      questions: createQuestions
+    };
+    console.log('🔥 New Quezz Data:', data);
+    alert('✅ Quezz created (dummy)');
+    tutupModalBuat();
+    // Reset all
+    createQuestions = [];
+    renderQuestionList();
+    document.getElementById('formBuatQuezz').reset();
+  }
+</script>

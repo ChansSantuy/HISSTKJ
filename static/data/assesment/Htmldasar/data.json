@@ -1,0 +1,68 @@
+{
+  "title": "HTML, CSS Dasar",
+  "description": "Assessment ini bertujuan untuk menguji pemahaman dasar HTML, khususnya dalam penggunaan tag teks, struktur, dan menampilkan gambar. Peserta diharapkan mampu mengenali tag HTML dasar dan memprediksi output kode.",
+  "start_at": "2025-09-30T12:30:00",
+  "close_at": "2025-09-30T15:30:00",
+  "created_at": "2025-09-23T21:30:00",
+  "timming": 20,
+  "xp_total": 40,
+  "rules": [
+    "Boleh menggunakan browsing/googling",
+    "boleh diskusi dengan teman",
+    "Waktu terbatas, tapi usahakan fokus dan detail",
+    "dilarang keras menggunakan ai  (seperti chatgpt, bard, cici, dll)",
+    "terciduk menggunakan ai, maka akan ditindak tegas",
+    "jangan ribut!!"
+  ],
+  "users": [
+    {
+      "name": "Channs_",
+      "duration": "7 menit 4 detik",
+      "correct_answers": 34,
+      "wrong_answers": 0,
+      "exp_earned": 60
+    },
+    {
+      "name": "revaaulia",
+      "duration": "17 menit 21 detik",
+      "correct_answers": 27,
+      "wrong_answers": 7,
+      "exp_earned": 47
+    },
+    {
+      "name": "rehancp",
+      "duration": "18 menit 54 detik",
+      "correct_answers": 20,
+      "wrong_answers": 14,
+      "exp_earned": 35
+    },
+    {
+      "name": "kania_a",
+      "duration": "20 menit 56 detik",
+      "correct_answers": 22,
+      "wrong_answers": 12,
+      "exp_earned": 39
+    },
+    {
+      "name": "zall",
+      "duration": "21 menit 2 detik",
+      "correct_answers": 20,
+      "wrong_answers": 14,
+      "exp_earned": 35
+    },
+    {
+      "name": "ziraaz",
+      "duration": "25 menit 8 detik",
+      "correct_answers": 18,
+      "wrong_answers": 16,
+      "exp_earned": 32
+    },
+    {
+      "name": "deakarina",
+      "duration": "15 menit 13 detik",
+      "correct_answers": 17,
+      "wrong_answers": 3,
+      "exp_earned": 34
+    }
+  ]
+}

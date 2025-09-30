@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Auth Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+  </style>
+</head>
+<body class="bg-zinc-900 text-white min-h-screen flex items-center justify-center px-4">
+
+<!-- Card Login -->
+<div class="relative w-full max-w-md rounded-xl bg-zinc-800 shadow-xl p-6">
+  <h2 class="text-2xl font-bold mb-4 text-white"><i class="fa fa-sign-in-alt mr-2"></i>Login</h2>
+  <form id="loginForm" class="space-y-4">
+    <input type="text" name="username" placeholder="Username"
+      class="w-full px-4 py-2 rounded bg-zinc-700 border border-zinc-600 text-white focus:ring-2 focus:ring-blue-500">
+    <input type="password" name="password" placeholder="Password"
+      class="w-full px-4 py-2 rounded bg-zinc-700 border border-zinc-600 text-white focus:ring-2 focus:ring-blue-500">
+    <button type="submit"
+      class="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded font-semibold text-white flex items-center justify-center gap-2">
+      <i class="fa fa-arrow-right"></i> Login
+    </button>
+  </form>
+</div>
+
+<!-- Modal Create User -->
+<div id="createUserModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center">
+  <div class="bg-white text-zinc-900 w-full max-w-lg rounded-xl shadow-2xl p-6 relative">
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b pb-3">
+      <h3 id="modalTitle" class="text-xl font-semibold flex items-center gap-2">
+        <i class="fa fa-user-plus text-blue-600"></i> Create User
+      </h3>
+      <button onclick="closeModal()" class="text-zinc-500 hover:text-red-500">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div id="modalContent" class="mt-4 space-y-3"></div>
+
+    <!-- Footer -->
+    <div class="flex justify-between mt-6">
+      <button id="backBtn" onclick="prevStep()" class="hidden px-4 py-2 bg-zinc-200 text-zinc-700 rounded-lg hover:bg-zinc-300 flex items-center gap-2">
+        <i class="fa fa-arrow-left"></i> Back
+      </button>
+      <button id="nextBtn" onclick="nextStep()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 ml-auto">
+        Next <i class="fa fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+let step = 1;
+let formData = {};
+
+// Open modal
+function openModal() {
+  step = 1;
+  document.getElementById("createUserModal").classList.remove("hidden");
+  renderStep();
+}
+
+// Close modal
+function closeModal() {
+  document.getElementById("createUserModal").classList.add("hidden");
+}
+
+// Render modal content per step
+function renderStep() {
+  const content = document.getElementById("modalContent");
+  const title = document.getElementById("modalTitle");
+  const nextBtn = document.getElementById("nextBtn");
+  const backBtn = document.getElementById("backBtn");
+
+  if (step === 1) {
+  title.innerHTML = `<i class="fa fa-id-card text-blue-600"></i> Data Siswa`;
+  content.innerHTML = `
+    <!-- Nama Lengkap -->
+    <div class="space-y-1 mb-3">
+      <label for="nama" class="block text-sm font-medium text-zinc-700">
+        <i class="fa fa-user mr-1 text-blue-600"></i> Nama Lengkap
+      </label>
+      <input id="nama" placeholder="Masukkan nama lengkap" 
+        class="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+    </div>
+
+    <div class="grid grid-cols-3 items-end gap-3">
+      
+      <!-- Dropdown Kelas -->
+      <div class="space-y-1">
+        <label for="kelas" class="block text-sm font-medium text-zinc-700">
+          <i class="fa fa-graduation-cap mr-1 text-blue-600"></i> Kelas
+        </label>
+        <select id="kelas"
+          class="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white">
+          <option value="">-- Pilih --</option>
+          <option value="X">X</option>
+          <option value="XI">XI</option>
+          <option value="XII">XII</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col items-center justify-center pb-2">
+        <span class="text-lg font-semibold text-zinc-700">TKJ</span>
+      </div>
+
+      <!-- Dropdown Nomor Kelas -->
+      <div class="space-y-1">
+        <label for="kelasMana" class="block text-sm font-medium text-zinc-700">
+          <i class="fa fa-list-ol mr-1 text-blue-600"></i> No.
+        </label>
+        <select id="kelasMana"
+          class="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white">
+          <option value="">-- Pilih --</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+
+    </div>
+  `;
+  backBtn.classList.add("hidden");
+  nextBtn.innerHTML = `Next <i class="fa fa-arrow-right"></i>`;
+}
+else if (step === 2) {
+  title.innerHTML = `<i class="fa fa-image text-blue-600"></i> Upload Avatar`;
+
+  content.innerHTML = `
+    <div class="flex justify-center">
+      <div class="relative group">
+        <!-- Avatar Image -->
+        <img id="avatarPreview" 
+          src="https://cdn-icons-png.flaticon.com/512/847/847969.png" 
+          alt="Avatar Default"
+          class="w-32 h-32 rounded-full object-cover border-4 border-zinc-300 shadow-md">
+
+        <!-- Overlay Camera -->
+        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+          <i class="fa fa-camera text-white text-2xl"></i>
+        </div>
+
+        <!-- Hidden File Input -->
+        <input type="file" id="avatar" accept="image/*" class="hidden">
+      </div>
+    </div>
+    <p class="text-center text-sm text-zinc-600 mt-3">Klik avatar untuk upload, atau pilih avatar default di bawah</p>
+
+    <!-- Default Avatar Options -->
+    <div class="grid grid-cols-6 gap-3 mt-4">
+      <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" class="w-12 h-12 rounded-full cursor-pointer border hover:ring-2 hover:ring-blue-500" onclick="setDefaultAvatar(this.src)">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="w-12 h-12 rounded-full cursor-pointer border hover:ring-2 hover:ring-blue-500" onclick="setDefaultAvatar(this.src)">
+      <img src="https://cdn-icons-png.flaticon.com/512/2202/2202112.png" class="w-12 h-12 rounded-full cursor-pointer border hover:ring-2 hover:ring-blue-500" onclick="setDefaultAvatar(this.src)">
+      <img src="https://cdn-icons-png.flaticon.com/512/1999/1999625.png" class="w-12 h-12 rounded-full cursor-pointer border hover:ring-2 hover:ring-blue-500" onclick="setDefaultAvatar(this.src)">
+      <img src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png" class="w-12 h-12 rounded-full cursor-pointer border hover:ring-2 hover:ring-blue-500" onclick="setDefaultAvatar(this.src)">
+      <img src="https://cdn-icons-png.flaticon.com/512/2922/2922487.png" class="w-12 h-12 rounded-full cursor-pointer border hover:ring-2 hover:ring-blue-500" onclick="setDefaultAvatar(this.src)">
+    </div>
+  `;
+
+  backBtn.classList.remove("hidden");
+  nextBtn.innerHTML = `Next <i class="fa fa-arrow-right"></i>`;
+
+  // Tambahkan event listener setelah render
+  setTimeout(() => {
+    const avatarImg = document.getElementById("avatarPreview");
+    const avatarInput = document.getElementById("avatar");
+    const avatarWrapper = avatarImg.parentElement;
+
+    avatarWrapper.addEventListener("click", () => {
+      avatarInput.click();
+    });
+
+    avatarInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          avatarImg.src = ev.target.result;
+          avatarImg.dataset.type = "upload"; // tandai dari upload
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }, 50);
+}
+
+  else if (step === 3) {
+    title.innerHTML = `<i class="fa fa-lock text-blue-600"></i> Buat Akun`;
+    content.innerHTML = `
+      <input id="usernameNew" placeholder="Username" class="w-full p-2 border rounded">
+      <input id="passwordNew" type="password" placeholder="Password" class="w-full p-2 border rounded">
+      <input id="passwordConfirm" type="password" placeholder="Konfirmasi Password" class="w-full p-2 border rounded">
+    `;
+    backBtn.classList.remove("hidden");
+    nextBtn.innerHTML = `<i class="fa fa-sign-in-alt"></i> Login`;
+  }
+}
+
+// Fungsi untuk set avatar dari default pilihan
+function setDefaultAvatar(src) {
+  const avatarImg = document.getElementById("avatarPreview");
+  avatarImg.src = src;
+  avatarImg.dataset.type = "default"; // tandai dari default
+}
+
+// Step navigation
+function nextStep() {
+  if (step === 1) {
+    formData.nama = document.getElementById("nama").value;
+    formData.kelas = document.getElementById("kelas").value;
+    formData.jurusan = "Tkj";
+    formData.kelasMana = document.getElementById("kelasMana").value;
+    step++;
+  } else if (step === 2) {
+    const file = document.getElementById("avatar").files[0];
+    const avatarImg = document.getElementById("avatarPreview");
+
+    if (file) {
+      formData.avatar = file; // kalau upload file
+    } else if (avatarImg.dataset.type === "default") {
+      formData.avatar_default = avatarImg.src; // kalau pilih default
+    }
+    step++;
+  } else if (step === 3) {
+    const u = document.getElementById("usernameNew").value;
+    const p1 = document.getElementById("passwordNew").value;
+    const p2 = document.getElementById("passwordConfirm").value;
+    if (p1 !== p2) {
+      alert("Password tidak cocok!");
+      return;
+    }
+    formData.username = u;
+    formData.password = p1;
+
+    // Kirim ke server
+    let fd = new FormData();
+    for (let key in formData) {
+      if (key === "avatar" && formData.avatar) {
+        fd.append("avatar", formData.avatar); // file upload
+      } else {
+        fd.append(key, formData[key]); // termasuk avatar_default kalau ada
+      }
+    }
+
+    $.ajax({
+      url: "/create-user",
+      type: "POST",
+      data: fd,
+      processData: false,
+      contentType: false,
+    }).then((res) => {
+      if (res.error) {
+        alert("Gagal: " + res.message);
+      } else {
+        window.location.href = "/";
+      }
+    });
+    return;
+  }
+  renderStep();
+}
+
+// Handle Login
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const username = this.username.value;
+  const pin = this.password.value;
+
+  $.ajax({
+    url: '/auth',
+    type: 'POST',
+    data: { username: username, pin: pin, mode: "Login" },
+  }).then((response) => {
+    if (response.create_user) {
+      openModal(); // buka modal custom
+    } else if (response.error) {
+      alert("Gagal: " + response.message);
+    } else {
+      window.location.href = '/';
+    }
+  });
+});
+</script>
+</body>
+</html>
